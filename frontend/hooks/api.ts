@@ -92,26 +92,6 @@ export const useAPI = (
     }
   }, [avatar]);
 
-  const [saveConfiguration, setSaveConfiguration] = useState(false);
-  useAsyncEffect(async () => {
-    if (!avatar) {
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      // TODO: Access external API here to save the user's existing configuration
-      await new Promise((res) => setTimeout(res, 1000));
-    } catch (e) {
-      console.error(e);
-
-      logout();
-    } finally {
-      setLoading(false);
-    }
-  }, [saveConfiguration]);
-
   return {
     avatar,
     signedIn: avatar !== "",
@@ -120,7 +100,24 @@ export const useAPI = (
     setEnabled,
     postTTL,
     setPostTTL,
-    saveConfiguration: () => setSaveConfiguration((v) => !v),
+    saveConfiguration: async () => {
+      if (!avatar) {
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        // TODO: Access external API here to save the user's existing configuration
+        await new Promise((res) => setTimeout(res, 1000));
+      } catch (e) {
+        console.error(e);
+
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    },
 
     loading,
   };

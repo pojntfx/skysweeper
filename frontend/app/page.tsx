@@ -47,6 +47,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { useAPI } from "@/hooks/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -142,6 +143,8 @@ export default function Home() {
     setValue("enabled", enabled);
     setValue("postTTL", postTTL);
   }, [setValue, enabled, postTTL]);
+
+  const { toast } = useToast();
 
   return (
     <>
@@ -245,11 +248,18 @@ export default function Home() {
                 <CardContent>
                   <Form {...{ setValue, ...configurationForm }}>
                     <form
-                      onSubmit={configurationForm.handleSubmit((v) => {
+                      onSubmit={configurationForm.handleSubmit(async (v) => {
                         setEnabled(v.enabled ? true : false);
                         setPostTTL(v.postTTL);
 
-                        saveConfiguration();
+                        await saveConfiguration();
+
+                        toast({
+                          title: "Configuration saved successfully",
+                          description: v.enabled
+                            ? "Your old skeets will now be deleted automatically."
+                            : "Your old skeets will no longer be deleted automatically.",
+                        });
                       })}
                       className="space-y-4"
                       id="configuration"
