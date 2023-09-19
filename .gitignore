@@ -1,0 +1,5 @@
+out
+target
+node_modules
+next-env.d.ts
+.next

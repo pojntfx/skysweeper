@@ -1,0 +1,345 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.gradient-blur,
+.gradient-blur-bottom {
+  position: fixed;
+  z-index: -5;
+  inset: auto 0 0 0;
+  height: 88px;
+
+  & > div,
+  &::before,
+  &::after {
+    position: absolute;
+    inset: 0;
+  }
+
+  pointer-events: none;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+}
+
+.gradient-blur {
+  top: 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.75), transparent);
+}
+
+html.light {
+  .gradient-blur {
+    background: linear-gradient(rgba(255, 255, 255, 0.75), transparent);
+  }
+
+  .gradient-blur-bottom {
+    background: linear-gradient(transparent, rgba(255, 255, 255, 0.75));
+  }
+}
+
+.gradient-blur,
+.gradient-blur-bottom {
+  ::before {
+    content: "";
+    z-index: -1;
+    backdrop-filter: blur(0.5px);
+  }
+
+  > div:nth-of-type(1) {
+    z-index: -2;
+    backdrop-filter: blur(1px);
+  }
+
+  > div:nth-of-type(2) {
+    z-index: -3;
+    backdrop-filter: blur(2px);
+  }
+
+  > div:nth-of-type(3) {
+    z-index: -4;
+    backdrop-filter: blur(4px);
+  }
+
+  > div:nth-of-type(4) {
+    z-index: -5;
+    backdrop-filter: blur(8px);
+  }
+
+  > div:nth-of-type(5) {
+    z-index: -6;
+    backdrop-filter: blur(16px);
+  }
+
+  > div:nth-of-type(6) {
+    z-index: -7;
+    backdrop-filter: blur(32px);
+  }
+
+  ::after {
+    content: "";
+    z-index: -8;
+    backdrop-filter: blur(64px);
+  }
+}
+
+.gradient-blur {
+  ::before {
+    mask: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 1) 12.5%,
+      rgba(0, 0, 0, 1) 25%,
+      rgba(0, 0, 0, 0) 37.5%
+    );
+  }
+
+  > div:nth-of-type(1) {
+    mask: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0) 12.5%,
+      rgba(0, 0, 0, 1) 25%,
+      rgba(0, 0, 0, 1) 37.5%,
+      rgba(0, 0, 0, 0) 50%
+    );
+  }
+
+  > div:nth-of-type(2) {
+    mask: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0) 25%,
+      rgba(0, 0, 0, 1) 37.5%,
+      rgba(0, 0, 0, 1) 50%,
+      rgba(0, 0, 0, 0) 62.5%
+    );
+  }
+
+  > div:nth-of-type(3) {
+    mask: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0) 37.5%,
+      rgba(0, 0, 0, 1) 50%,
+      rgba(0, 0, 0, 1) 62.5%,
+      rgba(0, 0, 0, 0) 75%
+    );
+  }
+
+  > div:nth-of-type(4) {
+    mask: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0) 50%,
+      rgba(0, 0, 0, 1) 62.5%,
+      rgba(0, 0, 0, 1) 75%,
+      rgba(0, 0, 0, 0) 87.5%
+    );
+  }
+
+  > div:nth-of-type(5) {
+    mask: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0) 62.5%,
+      rgba(0, 0, 0, 1) 75%,
+      rgba(0, 0, 0, 1) 87.5%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
+
+  > div:nth-of-type(6) {
+    mask: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0) 75%,
+      rgba(0, 0, 0, 1) 87.5%,
+      rgba(0, 0, 0, 1) 100%
+    );
+  }
+
+  ::after {
+    mask: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0) 87.5%,
+      rgba(0, 0, 0, 1) 100%
+    );
+  }
+}
+
+.gradient-blur-bottom {
+  ::before {
+    mask: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 1) 12.5%,
+      rgba(0, 0, 0, 1) 25%,
+      rgba(0, 0, 0, 0) 37.5%
+    );
+  }
+
+  > div:nth-of-type(1) {
+    mask: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 12.5%,
+      rgba(0, 0, 0, 1) 25%,
+      rgba(0, 0, 0, 1) 37.5%,
+      rgba(0, 0, 0, 0) 50%
+    );
+  }
+
+  > div:nth-of-type(2) {
+    mask: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 25%,
+      rgba(0, 0, 0, 1) 37.5%,
+      rgba(0, 0, 0, 1) 50%,
+      rgba(0, 0, 0, 0) 62.5%
+    );
+  }
+
+  > div:nth-of-type(3) {
+    mask: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 37.5%,
+      rgba(0, 0, 0, 1) 50%,
+      rgba(0, 0, 0, 1) 62.5%,
+      rgba(0, 0, 0, 0) 75%
+    );
+  }
+
+  > div:nth-of-type(4) {
+    mask: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 50%,
+      rgba(0, 0, 0, 1) 62.5%,
+      rgba(0, 0, 0, 1) 75%,
+      rgba(0, 0, 0, 0) 87.5%
+    );
+  }
+
+  > div:nth-of-type(5) {
+    mask: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 62.5%,
+      rgba(0, 0, 0, 1) 75%,
+      rgba(0, 0, 0, 1) 87.5%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
+
+  > div:nth-of-type(6) {
+    mask: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 75%,
+      rgba(0, 0, 0, 1) 87.5%,
+      rgba(0, 0, 0, 1) 100%
+    );
+  }
+
+  ::after {
+    mask: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 87.5%,
+      rgba(0, 0, 0, 1) 100%
+    );
+  }
+}
+
+html,
+body,
+.content {
+  height: 100%;
+
+  &.light body::after {
+    background: rgba(255, 255, 255, 0.75);
+  }
+
+  &.light .logo-dark {
+    display: none;
+  }
+
+  &.dark .logo-light {
+    display: none;
+  }
+}
+
+body {
+  &::before,
+  &::after {
+    content: "";
+    height: 100%;
+    width: 100%;
+    position: fixed;
+  }
+
+  &::before {
+    background: url(/bg.webp);
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: -6;
+  }
+
+  &::after {
+    background: rgba(0, 0, 0, 0.75);
+    top: 0;
+    z-index: -1;
+  }
+}
+
+.content {
+  overflow-y: auto;
+
+  > main {
+    min-height: 100%;
+    padding-top: 88px;
+    padding-bottom: 88px;
+  }
+}
