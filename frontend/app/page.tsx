@@ -63,7 +63,7 @@ import {
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useForm, useFormState } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useLocalStorage } from "usehooks-ts";
 import * as z from "zod";
 import logoDark from "../assets/logo-dark.svg";
@@ -135,9 +135,8 @@ export default function Home() {
     },
   });
 
-  const {
-    dirtyFields: { enabled: enabledDirty },
-  } = useFormState(configurationForm);
+  const { enabled: nextEnabled, postTTL: nextPostTTL } =
+    useWatch(configurationForm);
 
   useEffect(() => {
     setValue("enabled", enabled);
@@ -238,7 +237,7 @@ export default function Home() {
         <main className="flex-grow flex flex-col justify-center items-center gap-2 container">
           {signedIn ? (
             <>
-              <Card className="w-[500px]">
+              <Card className="max-w-full w-[500px]">
                 <CardHeader>
                   <CardTitle>Configuration</CardTitle>
                 </CardHeader>
@@ -256,7 +255,6 @@ export default function Home() {
                       id="configuration"
                     >
                       <FormField
-                        disabled={loading}
                         control={configurationForm.control}
                         name="enabled"
                         render={({ field }) => {
@@ -274,12 +272,12 @@ export default function Home() {
 
                               <div className="grid gap-1.5 leading-none">
                                 <FormLabel className="text-sm font-medium leading-none">
-                                  Automatically delete posts
+                                  Automatically delete old skeets
                                 </FormLabel>
 
                                 <p className="text-sm text-muted-foreground">
-                                  Enables the automatic deletion of your old
-                                  skeets.
+                                  No skeets will be deleted until you save the
+                                  configuration.
                                 </p>
                               </div>
                             </FormItem>
@@ -287,23 +285,35 @@ export default function Home() {
                         }}
                       />
 
-                      {enabledDirty && (
+                      {nextEnabled && (
                         <FormField
-                          disabled={loading}
                           control={configurationForm.control}
                           name="postTTL"
                           render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="space-y-2">
                               <FormLabel>Maximum post age</FormLabel>
 
                               <FormDescription>
-                                We will periodically scan your skeets, and if
-                                they are older than the duration set they will
-                                be automaticaly deleted.
+                                Aeolius will periodically scan your skeets, and
+                                if they are older than the maximum post age it
+                                will delete them for you automatically.
                               </FormDescription>
 
                               <FormControl>
-                                <Input type="number" {...field} />
+                                <div className="flex w-full items-center justify-center space-x-2 pt-2">
+                                  <Input
+                                    type="number"
+                                    size={
+                                      (nextPostTTL?.toString().length || 2) + 1
+                                    }
+                                    min={1}
+                                    className="w-auto"
+                                    {...field}
+                                  />{" "}
+                                  <div>
+                                    month{(nextPostTTL || 0) > 1 ? "s" : ""}
+                                  </div>
+                                </div>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -401,8 +411,8 @@ export default function Home() {
 
             <DialogTitle className="pt-4">Sign In</DialogTitle>
             <DialogDescription>
-              We need access to your Bluesky account in order to delete posts on
-              your behalf.
+              Aeolius needs access to your Bluesky account in order to delete
+              posts on your behalf.
             </DialogDescription>
           </DialogHeader>
 
