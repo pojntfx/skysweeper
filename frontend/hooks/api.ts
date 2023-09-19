@@ -13,7 +13,7 @@ export const useAPI = (
 ) => {
   const [agent, setAgent] = useState<BskyAgent>();
   const [avatar, setAvatar] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useAsyncEffect(async () => {
     if (!username || !appPassword || !service) {

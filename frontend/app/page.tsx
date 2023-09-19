@@ -44,7 +44,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Laptop,
   Loader,
-  Loader2,
   LogIn,
   LogOut,
   Moon,
@@ -200,9 +199,26 @@ export default function Home() {
             <>Content</>
           ) : (
             <>
+              <Image
+                src={logoDark}
+                alt="Aeolius Logo"
+                className="h-20 w-auto logo-dark"
+              />
+
+              <Image
+                src={logoLight}
+                alt="Aeolius Logo"
+                className="h-20 w-auto logo-light"
+              />
+
+              <h2 className="text-2xl mt-4 my-5 text-center">
+                Automatically delete your old skeets from Bluesky.
+              </h2>
+
               <Button
                 disabled={loading}
                 onClick={() => setSignInDialogOpen(true)}
+                className="mb-10"
               >
                 {loading ? (
                   <Loader className="mr-2 h-4 w-4 animate-spin" />
