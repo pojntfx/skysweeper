@@ -9,6 +9,14 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -48,13 +56,14 @@ import {
   LogOut,
   Moon,
   MoonStar,
+  Save,
   Sun,
   User,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, useFormState } from "react-hook-form";
 import { useLocalStorage } from "usehooks-ts";
 import * as z from "zod";
 import logoDark from "../assets/logo-dark.svg";
@@ -66,6 +75,14 @@ const setupFormSchema = z.object({
 
   service: z.string().min(1, "Service is required"),
   aeoliusAPI: z.string().min(1, "Aeolius API is required"),
+});
+
+const configurationFormSchema = z.object({
+  enabled: z.boolean().optional(),
+  postTTL: z.coerce
+    .number()
+    .int("Must be an integer")
+    .positive("Most be positive"),
 });
 
 export default function Home() {
@@ -95,13 +112,37 @@ export default function Home() {
     },
   });
 
-  const { avatar, signedIn, loading } = useAPI(
-    username,
-    password,
-    service,
-    aeoliusAPI,
-    () => setPassword("")
-  );
+  const {
+    avatar,
+    signedIn,
+
+    enabled,
+    setEnabled,
+    postTTL,
+    setPostTTL,
+    saveConfiguration,
+
+    loading,
+  } = useAPI(username, password, service, aeoliusAPI, () => setPassword(""));
+
+  const { setValue, ...configurationForm } = useForm<
+    z.infer<typeof configurationFormSchema>
+  >({
+    resolver: zodResolver(configurationFormSchema),
+    defaultValues: {
+      enabled: false,
+      postTTL: 6,
+    },
+  });
+
+  const {
+    dirtyFields: { enabled: enabledDirty },
+  } = useFormState(configurationForm);
+
+  useEffect(() => {
+    setValue("enabled", enabled);
+    setValue("postTTL", postTTL);
+  }, [setValue, enabled, postTTL]);
 
   return (
     <>
@@ -196,7 +237,95 @@ export default function Home() {
       <div className="content">
         <main className="flex-grow flex flex-col justify-center items-center gap-2 container">
           {signedIn ? (
-            <>Content</>
+            <>
+              <Card className="w-[500px]">
+                <CardHeader>
+                  <CardTitle>Configuration</CardTitle>
+                </CardHeader>
+
+                <CardContent>
+                  <Form {...{ setValue, ...configurationForm }}>
+                    <form
+                      onSubmit={configurationForm.handleSubmit((v) => {
+                        setEnabled(v.enabled ? true : false);
+                        setPostTTL(v.postTTL);
+
+                        saveConfiguration();
+                      })}
+                      className="space-y-4"
+                      id="configuration"
+                    >
+                      <FormField
+                        disabled={loading}
+                        control={configurationForm.control}
+                        name="enabled"
+                        render={({ field }) => {
+                          const { value, onChange, ...rest } = field;
+
+                          return (
+                            <FormItem className="items-top flex space-x-2 space-y-0">
+                              <FormControl>
+                                <Checkbox
+                                  checked={value}
+                                  onCheckedChange={onChange}
+                                  {...rest}
+                                />
+                              </FormControl>
+
+                              <div className="grid gap-1.5 leading-none">
+                                <FormLabel className="text-sm font-medium leading-none">
+                                  Automatically delete posts
+                                </FormLabel>
+
+                                <p className="text-sm text-muted-foreground">
+                                  Enables the automatic deletion of your old
+                                  skeets.
+                                </p>
+                              </div>
+                            </FormItem>
+                          );
+                        }}
+                      />
+
+                      {enabledDirty && (
+                        <FormField
+                          disabled={loading}
+                          control={configurationForm.control}
+                          name="postTTL"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Maximum post age</FormLabel>
+
+                              <FormDescription>
+                                We will periodically scan your skeets, and if
+                                they are older than the duration set they will
+                                be automaticaly deleted.
+                              </FormDescription>
+
+                              <FormControl>
+                                <Input type="number" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+                    </form>
+                  </Form>
+                </CardContent>
+
+                <CardFooter>
+                  <Button type="submit" form="configuration" disabled={loading}>
+                    {loading ? (
+                      <Loader className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Save className="mr-2 h-4 w-4" />
+                    )}{" "}
+                    Save
+                  </Button>
+                </CardFooter>
+              </Card>
+            </>
           ) : (
             <>
               <Image
@@ -272,8 +401,8 @@ export default function Home() {
 
             <DialogTitle className="pt-4">Sign In</DialogTitle>
             <DialogDescription>
-              Aeolius needs access to your Bluesky account in order to delete
-              posts on your behalf.
+              We need access to your Bluesky account in order to delete posts on
+              your behalf.
             </DialogDescription>
           </DialogHeader>
 
