@@ -20,9 +20,11 @@ type Configuration struct {
 
 var (
 	errCouldNotGetConfiguration    = errors.New("could not get configuraion")
-	errCouldNotEncode              = errors.New("could not encode")
-	errCouldNotDecode              = errors.New("could not decode")
 	errCouldNotUpsertConfiguration = errors.New("could not upsert configuration")
+	errCouldNotDeleteConfiguration = errors.New("could not delete configuration")
+
+	errCouldNotEncode = errors.New("could not encode")
+	errCouldNotDecode = errors.New("could not decode")
 )
 
 func main() {
@@ -117,6 +119,11 @@ func main() {
 
 			if err := json.NewEncoder(w).Encode(res); err != nil {
 				panic(fmt.Errorf("%w: %v", errCouldNotEncode, err))
+			}
+
+		case http.MethodDelete:
+			if err := persister.DeleteConfiguration(r.Context(), did); err != nil {
+				panic(fmt.Errorf("%w: %v", errCouldNotDeleteConfiguration, err))
 			}
 
 		default:

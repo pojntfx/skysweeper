@@ -5,6 +5,9 @@ from configurations;
 select *
 from configurations
 where did = $1;
+-- name: DeleteConfiguration :exec
+delete from configurations
+where did = $1;
 -- name: UpsertConfiguration :one
 insert into configurations (
         did,

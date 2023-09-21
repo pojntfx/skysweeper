@@ -30,6 +30,13 @@ func (p *ManagerPersister) GetConfiguration(
 	return p.queries.GetConfiguration(ctx, did)
 }
 
+func (p *ManagerPersister) DeleteConfiguration(
+	ctx context.Context,
+	did string,
+) error {
+	return p.queries.DeleteConfiguration(ctx, did)
+}
+
 func (p *WorkerPersister) GetConfigurations(
 	ctx context.Context,
 ) ([]models.Configuration, error) {

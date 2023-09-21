@@ -9,6 +9,16 @@ import (
 	"context"
 )
 
+const deleteConfiguration = `-- name: DeleteConfiguration :exec
+delete from configurations
+where did = $1
+`
+
+func (q *Queries) DeleteConfiguration(ctx context.Context, did string) error {
+	_, err := q.db.ExecContext(ctx, deleteConfiguration, did)
+	return err
+}
+
 const getConfiguration = `-- name: GetConfiguration :one
 select did, service, refresh_jwt, enabled, post_ttl
 from configurations
