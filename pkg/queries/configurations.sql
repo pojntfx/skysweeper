@@ -1,6 +1,10 @@
--- name: GetConfiguration :many
+-- name: GetConfigurations :many
 select *
 from configurations;
+-- name: GetConfiguration :one
+select *
+from configurations
+where did = $1;
 -- name: UpsertConfiguration :one
 insert into configurations (
         did,

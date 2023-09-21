@@ -23,10 +23,17 @@ func (p *ManagerPersister) UpsertConfiguration(
 	})
 }
 
+func (p *ManagerPersister) GetConfiguration(
+	ctx context.Context,
+	did string,
+) (models.Configuration, error) {
+	return p.queries.GetConfiguration(ctx, did)
+}
+
 func (p *WorkerPersister) GetConfigurations(
 	ctx context.Context,
 ) ([]models.Configuration, error) {
-	return p.queries.GetConfiguration(ctx)
+	return p.queries.GetConfigurations(ctx)
 }
 
 func (p *WorkerPersister) UpdateRefreshToken(

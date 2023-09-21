@@ -9,13 +9,32 @@ import (
 	"context"
 )
 
-const getConfiguration = `-- name: GetConfiguration :many
+const getConfiguration = `-- name: GetConfiguration :one
+select did, service, refresh_jwt, enabled, post_ttl
+from configurations
+where did = $1
+`
+
+func (q *Queries) GetConfiguration(ctx context.Context, did string) (Configuration, error) {
+	row := q.db.QueryRowContext(ctx, getConfiguration, did)
+	var i Configuration
+	err := row.Scan(
+		&i.Did,
+		&i.Service,
+		&i.RefreshJwt,
+		&i.Enabled,
+		&i.PostTtl,
+	)
+	return i, err
+}
+
+const getConfigurations = `-- name: GetConfigurations :many
 select did, service, refresh_jwt, enabled, post_ttl
 from configurations
 `
 
-func (q *Queries) GetConfiguration(ctx context.Context) ([]Configuration, error) {
-	rows, err := q.db.QueryContext(ctx, getConfiguration)
+func (q *Queries) GetConfigurations(ctx context.Context) ([]Configuration, error) {
+	rows, err := q.db.QueryContext(ctx, getConfigurations)
 	if err != nil {
 		return nil, err
 	}
