@@ -32,6 +32,7 @@ jobs:
             os: golang:bookworm
             flags: ""
             cmd: ./Hydrunfile go aeolius-worker
+            dst: out/*
           - id: go-aeolius-client
             src: .
             os: golang:bookworm
