@@ -123,6 +123,26 @@ export const useAPI = (
         setLoading(false);
       }
     },
+    deleteData: async () => {
+      if (!avatar) {
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        // TODO: Access external API here to delete the user configuration
+        await new Promise((res) => setTimeout(res, 1000));
+
+        logout();
+      } catch (e) {
+        console.error(e);
+
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    },
 
     loading,
   };

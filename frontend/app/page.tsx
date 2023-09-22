@@ -6,6 +6,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -92,6 +102,7 @@ const configurationFormSchema = z.object({
 export default function Home() {
   const { setTheme } = useTheme();
   const [signInDialogOpen, setSignInDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const [username, setUsername] = useLocalStorage("aeolius.username", "");
   const [password, setPassword] = useLocalStorage("aeolius.password", "");
@@ -127,6 +138,7 @@ export default function Home() {
     setPostTTL,
 
     saveConfiguration,
+    deleteData,
 
     loading,
   } = useAPI(username, password, service, aeoliusAPI, () => setPassword(""));
@@ -222,12 +234,20 @@ export default function Home() {
                             a.click();
 
                             URL.revokeObjectURL(url);
+
+                            toast({
+                              title: "Data downloaded successfully",
+                              description:
+                                "Your data has successfully been downloaded to your system.",
+                            });
                           }}
                         >
                           <DownloadCloud className="mr-2 h-4 w-4" />
                           <span>Download your Data</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setDeleteDialogOpen((v) => !v)}
+                        >
                           <TrashIcon className="mr-2 h-4 w-4" />
                           <span>Delete your Data</span>
                         </DropdownMenuItem>
@@ -586,6 +606,37 @@ export default function Home() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog
+        onOpenChange={(v) => setDeleteDialogOpen(v)}
+        open={deleteDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete your Aeolius account and remove your
+              data from our servers. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                await deleteData();
+
+                toast({
+                  title: "Data deleted successfully",
+                  description:
+                    "Your data has successfully been deleted from our servers.",
+                });
+              }}
+            >
+              Delete Your Data
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
