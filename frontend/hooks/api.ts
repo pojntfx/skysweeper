@@ -14,6 +14,7 @@ export const useAPI = (
   const [agent, setAgent] = useState<BskyAgent>();
   const [avatar, setAvatar] = useState("");
   const [loading, setLoading] = useState(true);
+  const [did, setDID] = useState("");
 
   useAsyncEffect(async () => {
     if (!username || !appPassword || !service) {
@@ -31,10 +32,12 @@ export const useAPI = (
     });
 
     try {
-      await agent.login({
+      const res = await agent.login({
         identifier: username,
         password: appPassword,
       });
+
+      setDID(res.data.did);
     } catch (e) {
       console.error(e);
 
@@ -94,12 +97,14 @@ export const useAPI = (
 
   return {
     avatar,
+    did,
     signedIn: avatar !== "",
 
     enabled,
     setEnabled,
     postTTL,
     setPostTTL,
+
     saveConfiguration: async () => {
       if (!avatar) {
         return;

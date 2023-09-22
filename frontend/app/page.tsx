@@ -51,6 +51,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAPI } from "@/hooks/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  Database,
+  DownloadCloud,
   Laptop,
   Loader,
   LogIn,
@@ -59,6 +61,7 @@ import {
   MoonStar,
   Save,
   Sun,
+  TrashIcon,
   User,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -115,12 +118,14 @@ export default function Home() {
 
   const {
     avatar,
+    did,
     signedIn,
 
     enabled,
     setEnabled,
     postTTL,
     setPostTTL,
+
     saveConfiguration,
 
     loading,
@@ -187,6 +192,48 @@ export default function Home() {
                   <DropdownMenuItem onClick={() => setPassword("")}>
                     <LogOut className="mr-2 h-4 w-4" /> Logout
                   </DropdownMenuItem>
+
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      <Database className="mr-2 h-4 w-4" />
+                      <span>Privacy</span>
+                    </DropdownMenuSubTrigger>
+
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            const data = {
+                              did,
+                              service,
+                              enabled,
+                              postTTL,
+                            };
+
+                            const blob = new Blob(
+                              [JSON.stringify(data, null, 2)],
+                              { type: "application/json" }
+                            );
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+
+                            a.href = url;
+                            a.download = "aeolius.json";
+                            a.click();
+
+                            URL.revokeObjectURL(url);
+                          }}
+                        >
+                          <DownloadCloud className="mr-2 h-4 w-4" />
+                          <span>Download your Data</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <TrashIcon className="mr-2 h-4 w-4" />
+                          <span>Delete your Data</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
 
                   <DropdownMenuLabel>Settings</DropdownMenuLabel>
                   <DropdownMenuSeparator />
