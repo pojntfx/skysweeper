@@ -15,12 +15,15 @@ export const useAPI = (
   const [loading, setLoading] = useState(true);
   const [did, setDID] = useState("");
   const [accessJWT, setAccessJWT] = useState("");
+  const [refreshJWT, setRefreshJWT] = useState("");
 
-  const logout = useCallback(() => setAccessJWT(""), []);
+  const logout = useCallback(() => setAPI(undefined), []);
 
   useAsyncEffect(async () => {
     if (!username || !appPassword || !service) {
       setAvatar("");
+
+      setLoading(false);
 
       return;
     }
@@ -39,6 +42,7 @@ export const useAPI = (
 
       setDID(res.data.did);
       setAccessJWT(res.data.accessJwt);
+      setRefreshJWT(res.data.refreshJwt);
     } catch (e) {
       console.error(e);
 
@@ -72,12 +76,19 @@ export const useAPI = (
 
   const [api, setAPI] = useState<ConfigurationRestAPI>();
   useAsyncEffect(() => {
-    if (!aeoliusAPI || !service || !accessJWT) {
+    if (!aeoliusAPI || !service || !accessJWT || !refreshJWT) {
       return;
     }
 
-    setAPI(new ConfigurationRestAPI(new URL(aeoliusAPI), service, accessJWT));
-  }, [aeoliusAPI, service, accessJWT]);
+    setAPI(
+      new ConfigurationRestAPI(
+        new URL(aeoliusAPI),
+        service,
+        accessJWT,
+        refreshJWT
+      )
+    );
+  }, [aeoliusAPI, service, accessJWT, refreshJWT]);
 
   const [enabled, setEnabled] = useState(false);
   const [postTTL, setPostTTL] = useState(6);
@@ -103,7 +114,7 @@ export const useAPI = (
   return {
     avatar,
     did,
-    signedIn: accessJWT !== "",
+    signedIn: api ? true : false,
 
     enabled,
     setEnabled,
@@ -111,7 +122,7 @@ export const useAPI = (
     setPostTTL,
 
     saveConfiguration: async () => {
-      if (!accessJWT) {
+      if (!api) {
         return;
       }
 
@@ -127,7 +138,7 @@ export const useAPI = (
       }
     },
     deleteData: async () => {
-      if (!accessJWT) {
+      if (!api) {
         return;
       }
 

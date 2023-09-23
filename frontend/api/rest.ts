@@ -4,7 +4,8 @@ export class ConfigurationRestAPI {
   constructor(
     private apiURL: URL,
     private service: string,
-    private accessJWT: string
+    private accessJWT: string,
+    private refreshJWT: string
   ) {}
 
   async getConfiguration(): Promise<IConfiguration> {
@@ -42,7 +43,7 @@ export class ConfigurationRestAPI {
         method: "PUT",
         body: JSON.stringify(config),
         headers: {
-          Authorization: "Bearer " + this.accessJWT,
+          Authorization: "Bearer " + this.refreshJWT,
           "Content-Type": "application/json",
         },
       })
