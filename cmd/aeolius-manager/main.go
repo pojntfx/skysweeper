@@ -38,6 +38,7 @@ var (
 func main() {
 	postgresUrl := flag.String("postgres-url", "postgresql://postgres@localhost:5432/aeolius?sslmode=disable", "PostgreSQL URL")
 	laddr := flag.String("laddr", "localhost:1337", "Listen address")
+	origin := flag.String("origin", "https://aeolius.p8.lu", "Allowed CORS origin")
 
 	flag.Parse()
 
@@ -61,6 +62,17 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/configuration", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if o := r.Header.Get("Origin"); o == *origin {
+			w.Header().Set("Access-Control-Allow-Origin", o)
+			w.Header().Set("Access-Control-Allow-Methods", "GET, PUT, DELETE")
+			w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
+		}
+
+		if r.Method == http.MethodOptions {
+			return
+		}
+
 		accessJwt := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 		if strings.TrimSpace(accessJwt) == "" {
 			w.WriteHeader(http.StatusUnauthorized)
