@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -10,6 +11,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/bluesky-social/indigo/api/atproto"
+	"github.com/bluesky-social/indigo/xrpc"
 	"github.com/pojntfx/aeolius/pkg/persisters"
 )
 
@@ -25,6 +28,11 @@ var (
 
 	errCouldNotEncode = errors.New("could not encode")
 	errCouldNotDecode = errors.New("could not decode")
+
+	errMissingService = errors.New("missing service")
+
+	errCouldNotGetSession     = errors.New("could not get session")
+	errCouldNotRefreshSession = errors.New("could not refresh session")
 )
 
 func main() {
@@ -60,6 +68,15 @@ func main() {
 			return
 		}
 
+		service := r.URL.Query().Get("service")
+		if strings.TrimSpace(service) == "" {
+			http.Error(w, errMissingService.Error(), http.StatusUnprocessableEntity)
+
+			log.Println(errMissingService)
+
+			return
+		}
+
 		defer func() {
 			if err := recover(); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
@@ -68,16 +85,29 @@ func main() {
 			}
 		}()
 
-		// TODO: Validate token from Bsky based on https://github.com/ericvolp12/bsky-experiments/blob/main/pkg/auth/auth.go#L146 and get DID
-
-		did := "did:plc:ijpidtwscybqhs5fxyzjojmu"
-		service := "https://bsky.social"
-		refreshJWT := ""
+		client := &xrpc.Client{
+			Client: http.DefaultClient,
+			Host:   service,
+			Auth: &xrpc.AuthInfo{
+				AccessJwt: accessJwt,
+			},
+		}
 
 		switch r.Method {
 		case http.MethodGet:
-			config, err := persister.GetConfiguration(r.Context(), did)
+			session, err := atproto.ServerGetSession(r.Context(), client)
 			if err != nil {
+				panic(fmt.Errorf("%w: %v", errCouldNotGetSession, err))
+			}
+
+			config, err := persister.GetConfiguration(r.Context(), session.Did)
+			if err != nil {
+				if errors.Is(err, sql.ErrNoRows) {
+					w.WriteHeader(http.StatusNotFound)
+
+					return
+				}
+
 				panic(fmt.Errorf("%w: %v", errCouldNotGetConfiguration, err))
 			}
 
@@ -93,6 +123,11 @@ func main() {
 			}
 
 		case http.MethodPut:
+			session, err := atproto.ServerRefreshSession(r.Context(), client)
+			if err != nil {
+				panic(fmt.Errorf("%w: %v", errCouldNotRefreshSession, err))
+			}
+
 			var req Configuration
 			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 				panic(fmt.Errorf("%w: %v", errCouldNotDecode, err))
@@ -100,9 +135,9 @@ func main() {
 
 			config, err := persister.UpsertConfiguration(
 				r.Context(),
-				did,
+				session.Did,
 				service,
-				refreshJWT,
+				session.RefreshJwt,
 				req.Enabled,
 				req.PostTTL,
 			)
@@ -122,7 +157,12 @@ func main() {
 			}
 
 		case http.MethodDelete:
-			if err := persister.DeleteConfiguration(r.Context(), did); err != nil {
+			session, err := atproto.ServerGetSession(r.Context(), client)
+			if err != nil {
+				panic(fmt.Errorf("%w: %v", errCouldNotGetSession, err))
+			}
+
+			if err := persister.DeleteConfiguration(r.Context(), session.Did); err != nil {
 				panic(fmt.Errorf("%w: %v", errCouldNotDeleteConfiguration, err))
 			}
 
