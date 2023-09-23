@@ -1,5 +1,6 @@
+import { ConfigurationRestAPI } from "@/api/rest";
 import { BskyAgent } from "@atproto/api";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useAsyncEffect } from "use-async-effect";
 
 export const useAPI = (
@@ -7,20 +8,19 @@ export const useAPI = (
   appPassword: string,
 
   service: string,
-  atmosfeedAPI: string,
-
-  logout: () => void
+  aeoliusAPI: string
 ) => {
   const [agent, setAgent] = useState<BskyAgent>();
   const [avatar, setAvatar] = useState("");
   const [loading, setLoading] = useState(true);
   const [did, setDID] = useState("");
+  const [accessJWT, setAccessJWT] = useState("");
+
+  const logout = useCallback(() => setAccessJWT(""), []);
 
   useAsyncEffect(async () => {
     if (!username || !appPassword || !service) {
       setAvatar("");
-
-      setLoading(false);
 
       return;
     }
@@ -38,6 +38,7 @@ export const useAPI = (
       });
 
       setDID(res.data.did);
+      setAccessJWT(res.data.accessJwt);
     } catch (e) {
       console.error(e);
 
@@ -66,39 +67,43 @@ export const useAPI = (
       console.error(e);
 
       logout();
-    } finally {
-      setLoading(false);
     }
   }, [agent]);
+
+  const [api, setAPI] = useState<ConfigurationRestAPI>();
+  useAsyncEffect(() => {
+    if (!aeoliusAPI || !service || !accessJWT) {
+      return;
+    }
+
+    setAPI(new ConfigurationRestAPI(new URL(aeoliusAPI), service, accessJWT));
+  }, [aeoliusAPI, service, accessJWT]);
 
   const [enabled, setEnabled] = useState(false);
   const [postTTL, setPostTTL] = useState(6);
   useAsyncEffect(async () => {
-    if (!avatar) {
+    if (!api) {
       return;
     }
 
     setLoading(true);
 
     try {
-      // TODO: Access external API here to fetch the user's existing configuration
-      await new Promise((res) => setTimeout(res, 1000));
+      const res = await api.getConfiguration();
 
-      setPostTTL(6);
-      setEnabled(false);
+      setPostTTL(res.postTTL);
+      setEnabled(res.enabled);
     } catch (e) {
       console.error(e);
-
-      logout();
     } finally {
       setLoading(false);
     }
-  }, [avatar]);
+  }, [api]);
 
   return {
     avatar,
     did,
-    signedIn: avatar !== "",
+    signedIn: accessJWT !== "",
 
     enabled,
     setEnabled,
@@ -106,7 +111,7 @@ export const useAPI = (
     setPostTTL,
 
     saveConfiguration: async () => {
-      if (!avatar) {
+      if (!accessJWT) {
         return;
       }
 
@@ -117,14 +122,12 @@ export const useAPI = (
         await new Promise((res) => setTimeout(res, 1000));
       } catch (e) {
         console.error(e);
-
-        logout();
       } finally {
         setLoading(false);
       }
     },
     deleteData: async () => {
-      if (!avatar) {
+      if (!accessJWT) {
         return;
       }
 
@@ -137,13 +140,12 @@ export const useAPI = (
         logout();
       } catch (e) {
         console.error(e);
-
-        logout();
       } finally {
         setLoading(false);
       }
     },
 
     loading,
+    logout,
   };
 };

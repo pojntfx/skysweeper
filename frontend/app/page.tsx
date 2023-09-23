@@ -76,7 +76,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useLocalStorage } from "usehooks-ts";
 import * as z from "zod";
@@ -109,11 +109,11 @@ export default function Home() {
 
   const [service, setService] = useLocalStorage(
     "aeolius.service",
-    "https://bsky.social"
+    process.env.AEOLIUS_SERVICE_DEFAULT || "https://bsky.social"
   );
   const [aeoliusAPI, setAeoliusAPI] = useLocalStorage(
     "aeolius.aeoliusURL",
-    "https://api.aeolius.p8s.lu"
+    process.env.AEOLIUS_API_DEFAULT || "https://api.aeolius.p8s.lu"
   );
 
   const setupForm = useForm<z.infer<typeof setupFormSchema>>({
@@ -141,7 +141,13 @@ export default function Home() {
     deleteData,
 
     loading,
-  } = useAPI(username, password, service, aeoliusAPI, () => setPassword(""));
+    logout: _logout,
+  } = useAPI(username, password, service, aeoliusAPI);
+
+  const logout = useCallback(() => {
+    setPassword("");
+    _logout();
+  }, [_logout, setPassword]);
 
   const { setValue, ...configurationForm } = useForm<
     z.infer<typeof configurationFormSchema>
@@ -201,7 +207,7 @@ export default function Home() {
                   >
                     <User className="mr-2 h-4 w-4" /> Profile
                   </DropdownMenuLink>
-                  <DropdownMenuItem onClick={() => setPassword("")}>
+                  <DropdownMenuItem onClick={() => logout()}>
                     <LogOut className="mr-2 h-4 w-4" /> Logout
                   </DropdownMenuItem>
 
