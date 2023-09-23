@@ -57,13 +57,11 @@ export class ConfigurationRestAPI {
       service: this.service,
     }).toString();
 
-    return (
-      await fetch(configurationURL.toString(), {
-        method: "DELETE",
-        headers: {
-          Authorization: "Bearer " + this.accessJWT,
-        },
-      })
-    ).json();
+    await fetch(configurationURL.toString(), {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + this.accessJWT,
+      },
+    });
   }
 }

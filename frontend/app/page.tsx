@@ -101,7 +101,7 @@ const configurationFormSchema = z.object({
 
 export default function Home() {
   const { setTheme } = useTheme();
-  const [signInDialogOpen, setSignInDialogOpen] = useState(false);
+  const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const [username, setUsername] = useLocalStorage("aeolius.username", "");
@@ -133,21 +133,14 @@ export default function Home() {
     signedIn,
 
     enabled,
-    setEnabled,
     postTTL,
-    setPostTTL,
 
     saveConfiguration,
     deleteData,
 
     loading,
-    logout: _logout,
-  } = useAPI(username, password, service, aeoliusAPI);
-
-  const logout = useCallback(() => {
-    setPassword("");
-    _logout();
-  }, [_logout, setPassword]);
+    logout,
+  } = useAPI(username, password, service, aeoliusAPI, () => setPassword(""));
 
   const { setValue, ...configurationForm } = useForm<
     z.infer<typeof configurationFormSchema>
@@ -322,10 +315,10 @@ export default function Home() {
                   <Form {...{ setValue, ...configurationForm }}>
                     <form
                       onSubmit={configurationForm.handleSubmit(async (v) => {
-                        setEnabled(v.enabled ? true : false);
-                        setPostTTL(v.postTTL);
-
-                        await saveConfiguration();
+                        await saveConfiguration(
+                          v.enabled ? true : false,
+                          v.postTTL
+                        );
 
                         toast({
                           title: "Configuration saved successfully",
@@ -439,7 +432,7 @@ export default function Home() {
 
               <Button
                 disabled={loading}
-                onClick={() => setSignInDialogOpen(true)}
+                onClick={() => setLoginDialogOpen(true)}
                 className="mb-10"
               >
                 {loading ? (
@@ -447,7 +440,7 @@ export default function Home() {
                 ) : (
                   <LogIn className="mr-2 h-4 w-4" />
                 )}{" "}
-                Sign in with Bluesky
+                Login with Bluesky
               </Button>
             </>
           )}
@@ -475,8 +468,8 @@ export default function Home() {
       </div>
 
       <Dialog
-        onOpenChange={(v) => setSignInDialogOpen(v)}
-        open={signInDialogOpen}
+        onOpenChange={(v) => setLoginDialogOpen(v)}
+        open={loginDialogOpen}
       >
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -492,7 +485,7 @@ export default function Home() {
               className="h-10 w-auto logo-light"
             />
 
-            <DialogTitle className="pt-4">Sign In</DialogTitle>
+            <DialogTitle className="pt-4">Login</DialogTitle>
             <DialogDescription>
               Aeolius needs access to your Bluesky account in order to delete
               posts on your behalf.
@@ -508,7 +501,7 @@ export default function Home() {
                 setService(v.service);
                 setAeoliusAPI(v.aeoliusAPI);
 
-                setSignInDialogOpen(false);
+                setLoginDialogOpen(false);
               })}
               className="space-y-4"
               id="setup"
@@ -634,7 +627,7 @@ export default function Home() {
                 toast({
                   title: "Data deleted successfully",
                   description:
-                    "Your data has successfully been deleted from our servers.",
+                    "Your data has successfully been deleted from our servers and you have been logged out.",
                 });
               }}
             >

@@ -8,7 +8,9 @@ export const useAPI = (
   appPassword: string,
 
   service: string,
-  aeoliusAPI: string
+  aeoliusAPI: string,
+
+  clearAppPassword: () => void
 ) => {
   const [agent, setAgent] = useState<BskyAgent>();
   const [avatar, setAvatar] = useState("");
@@ -17,7 +19,10 @@ export const useAPI = (
   const [accessJWT, setAccessJWT] = useState("");
   const [refreshJWT, setRefreshJWT] = useState("");
 
-  const logout = useCallback(() => setAPI(undefined), []);
+  const logout = useCallback(() => {
+    setAPI(undefined);
+    clearAppPassword();
+  }, [clearAppPassword]);
 
   useAsyncEffect(async () => {
     if (!username || !appPassword || !service) {
@@ -117,11 +122,9 @@ export const useAPI = (
     signedIn: api ? true : false,
 
     enabled,
-    setEnabled,
     postTTL,
-    setPostTTL,
 
-    saveConfiguration: async () => {
+    saveConfiguration: async (enabled: boolean, postTTL: number) => {
       if (!api) {
         return;
       }
@@ -129,8 +132,13 @@ export const useAPI = (
       setLoading(true);
 
       try {
-        // TODO: Access external API here to save the user's existing configuration
-        await new Promise((res) => setTimeout(res, 1000));
+        const res = await api.updateConfiguration({
+          enabled,
+          postTTL,
+        });
+
+        setPostTTL(res.postTTL);
+        setEnabled(res.enabled);
       } catch (e) {
         console.error(e);
       } finally {
@@ -145,8 +153,7 @@ export const useAPI = (
       setLoading(true);
 
       try {
-        // TODO: Access external API here to delete the user configuration
-        await new Promise((res) => setTimeout(res, 1000));
+        await api.deleteConfiguration();
 
         logout();
       } catch (e) {
