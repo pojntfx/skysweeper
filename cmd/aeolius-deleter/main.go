@@ -17,8 +17,7 @@ func main() {
 	password := flag.String("password", "", "Bluesky password, preferably an app password (get one from https://bsky.app/settings/app-passwords)")
 	postTTL := flag.Int("post-ttl", 3, "Maximum post age before considering it for deletion")
 	cursorFlag := flag.String("cursor", "", "Cursor from which point forwards posts should be considered for deletion")
-	batchSize := flag.Int("batch-size", 100, "How many posts to read at a time")
-	limit := flag.Int("limit", 10, "Maximum amount of batches of posts to read/delete")
+	rateLimitPointsDID := flag.Int("rate-limit-points-did", 1000, "Maximum amount of rate limit points to spend per DID (see https://atproto.com/blog/rate-limits-pds-v3; must be less than 1666 per hour as of September 2023)")
 
 	flag.Parse()
 
@@ -46,7 +45,7 @@ func main() {
 	auth.Handle = session.Handle
 	auth.Did = session.Did
 
-	recordsToDelete, cursor, err := bluesky.GetPostsToDelete(client, *postTTL, *cursorFlag, *batchSize, *limit)
+	recordsToDelete, cursor, err := bluesky.GetPostsToDelete(client, *postTTL, *cursorFlag, 100, *rateLimitPointsDID/100)
 	if err != nil {
 		panic(err)
 	}
