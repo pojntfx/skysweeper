@@ -3,7 +3,7 @@ module github.com/pojntfx/aeolius
 go 1.21.0
 
 require (
-	github.com/bluesky-social/indigo v0.0.0-20230920044649-ac7620495045
+	github.com/bluesky-social/indigo v0.0.0-20230924181411-a2219fc5ef21
 	github.com/lib/pq v1.10.9
 	github.com/pressly/goose/v3 v3.15.0
 )
@@ -39,7 +39,7 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/polydawn/refmt v0.89.1-0.20221221234430-40501e09de1f // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
-	github.com/whyrusleeping/cbor-gen v0.0.0-20230818171029-f91ae536ca25 // indirect
+	github.com/whyrusleeping/cbor-gen v0.0.0-20230923211252-36a87e1ba72f // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.26.0 // indirect
