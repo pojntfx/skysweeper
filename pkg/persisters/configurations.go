@@ -37,10 +37,10 @@ func (p *ManagerPersister) DeleteConfiguration(
 	return p.queries.DeleteConfiguration(ctx, did)
 }
 
-func (p *WorkerPersister) GetConfigurations(
+func (p *WorkerPersister) GetEnabledConfigurations(
 	ctx context.Context,
 ) ([]models.Configuration, error) {
-	return p.queries.GetConfigurations(ctx)
+	return p.queries.GetEnabledConfigurations(ctx)
 }
 
 func (p *WorkerPersister) UpdateRefreshToken(

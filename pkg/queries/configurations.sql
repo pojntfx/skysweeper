@@ -1,6 +1,7 @@
--- name: GetConfigurations :many
+-- name: GetEnabledConfigurations :many
 select *
-from configurations;
+from configurations
+where enabled = true;
 -- name: GetConfiguration :one
 select *
 from configurations

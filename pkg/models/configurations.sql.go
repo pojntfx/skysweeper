@@ -38,13 +38,14 @@ func (q *Queries) GetConfiguration(ctx context.Context, did string) (Configurati
 	return i, err
 }
 
-const getConfigurations = `-- name: GetConfigurations :many
+const getEnabledConfigurations = `-- name: GetEnabledConfigurations :many
 select did, service, refresh_jwt, enabled, post_ttl
 from configurations
+where enabled = true
 `
 
-func (q *Queries) GetConfigurations(ctx context.Context) ([]Configuration, error) {
-	rows, err := q.db.QueryContext(ctx, getConfigurations)
+func (q *Queries) GetEnabledConfigurations(ctx context.Context) ([]Configuration, error) {
+	rows, err := q.db.QueryContext(ctx, getEnabledConfigurations)
 	if err != nil {
 		return nil, err
 	}
