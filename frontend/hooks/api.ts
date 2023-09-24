@@ -10,7 +10,9 @@ export const useAPI = (
   service: string,
   aeoliusAPI: string,
 
-  clearAppPassword: () => void
+  clearAppPassword: () => void,
+
+  handleError: (err: Error, loggedOut: boolean) => void
 ) => {
   const [agent, setAgent] = useState<BskyAgent>();
   const [avatar, setAvatar] = useState("");
@@ -49,7 +51,7 @@ export const useAPI = (
       setAccessJWT(res.data.accessJwt);
       setRefreshJWT(res.data.refreshJwt);
     } catch (e) {
-      console.error(e);
+      handleError(e as Error, true);
 
       logout();
     }
@@ -73,7 +75,7 @@ export const useAPI = (
         ).data.avatar || ""
       );
     } catch (e) {
-      console.error(e);
+      handleError(e as Error, true);
 
       logout();
     }
@@ -110,7 +112,7 @@ export const useAPI = (
       setPostTTL(res.postTTL);
       setEnabled(res.enabled);
     } catch (e) {
-      console.error(e);
+      handleError(e as Error, false);
     } finally {
       setLoading(false);
     }
@@ -140,7 +142,7 @@ export const useAPI = (
         setPostTTL(res.postTTL);
         setEnabled(res.enabled);
       } catch (e) {
-        console.error(e);
+        handleError(e as Error, false);
       } finally {
         setLoading(false);
       }
@@ -157,7 +159,7 @@ export const useAPI = (
 
         logout();
       } catch (e) {
-        console.error(e);
+        handleError(e as Error, false);
       } finally {
         setLoading(false);
       }

@@ -140,7 +140,23 @@ export default function Home() {
 
     loading,
     logout,
-  } = useAPI(username, password, service, aeoliusAPI, () => setPassword(""));
+  } = useAPI(
+    username,
+    password,
+    service,
+    aeoliusAPI,
+    () => setPassword(""),
+    (err, loggedOut) =>
+      loggedOut
+        ? toast({
+            title: "You Have Been Logged Out",
+            description: `Authentication with Bluesky failed and you have been logged out. The error is: "${err?.message}"`,
+          })
+        : toast({
+            title: "An Error Occured",
+            description: `An error could not be handled. The error is: "${err?.message}"`,
+          })
+  );
 
   const { setValue, ...configurationForm } = useForm<
     z.infer<typeof configurationFormSchema>
@@ -235,7 +251,7 @@ export default function Home() {
                             URL.revokeObjectURL(url);
 
                             toast({
-                              title: "Data downloaded successfully",
+                              title: "Data Downloaded Successfully",
                               description:
                                 "Your data has successfully been downloaded to your system.",
                             });
@@ -321,7 +337,7 @@ export default function Home() {
                         );
 
                         toast({
-                          title: "Configuration saved successfully",
+                          title: "Configuration Saved Successfully",
                           description: v.enabled
                             ? "Your old skeets will now be deleted automatically."
                             : "Your old skeets will no longer be deleted automatically.",
@@ -625,7 +641,7 @@ export default function Home() {
                 await deleteData();
 
                 toast({
-                  title: "Data deleted successfully",
+                  title: "Data Deleted Successfullyy",
                   description:
                     "Your data has successfully been deleted from our servers and you have been logged out.",
                 });
