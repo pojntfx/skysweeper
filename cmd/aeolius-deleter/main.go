@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/bluesky-social/indigo/api/atproto"
 	"github.com/bluesky-social/indigo/xrpc"
@@ -17,7 +18,9 @@ func main() {
 	password := flag.String("password", "", "Bluesky password, preferably an app password (get one from https://bsky.app/settings/app-passwords)")
 	postTTL := flag.Int("post-ttl", 3, "Maximum post age before considering it for deletion")
 	cursorFlag := flag.String("cursor", "", "Cursor from which point forwards posts should be considered for deletion")
-	rateLimitPointsDID := flag.Int("rate-limit-points-did", 1000, "Maximum amount of rate limit points to spend per DID (see https://atproto.com/blog/rate-limits-pds-v3; must be less than 1666 per hour as of September 2023)")
+	rateLimitPointsDID := flag.Int("rate-limit-points-did", 200, "Maximum amount of rate limit points to spend per DID (see https://atproto.com/blog/rate-limits-pds-v3; must be less than 1666 per hour as of September 2023)")
+	rateLimitPointsGlobal := flag.Int("rate-limit-points-global", 2500, "Maximum amount of rate limit points to spend per rate limit reset interval for this IP (see https://atproto.com/blog/rate-limits-pds-v3; must be less than 3000 per hour as of September 2023)")
+	rateLimitResetInterval := flag.Duration("rate-limit-reset-interval", time.Minute*5, "Duration of a rate limit reset interval for this IP (see https://atproto.com/blog/rate-limits-pds-v3; 5 minutes as of September 2023)")
 
 	flag.Parse()
 
@@ -45,7 +48,31 @@ func main() {
 	auth.Handle = session.Handle
 	auth.Did = session.Did
 
-	recordsToDelete, cursor, err := bluesky.GetPostsToDelete(client, *postTTL, *cursorFlag, 100, *rateLimitPointsDID/100)
+	limiter := bluesky.NewLimiter(
+		ctx,
+
+		*rateLimitPointsGlobal,
+		*rateLimitResetInterval,
+
+		func() error {
+			log.Println("Pausing until rate limit reset interval")
+
+			return nil
+		},
+	)
+
+	go limiter.Open()
+
+	recordsToDelete, cursor, err := bluesky.GetPostsToDelete(
+		client,
+
+		*postTTL,
+		*cursorFlag,
+		100,
+		*rateLimitPointsDID/100,
+
+		limiter,
+	)
 	if err != nil {
 		panic(err)
 	}

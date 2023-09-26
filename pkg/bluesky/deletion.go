@@ -36,6 +36,8 @@ func GetPostsToDelete(
 	cursor string,
 	batchSize int,
 	limit int,
+
+	limiter *Limiter,
 ) ([]Record, string, error) {
 	rawURL, err := url.JoinPath(client.Host, "/xrpc/com.atproto.repo.listRecords")
 	if err != nil {
@@ -50,6 +52,10 @@ func GetPostsToDelete(
 	recordsToDelete := []Record{}
 l:
 	for i := 0; i < limit; i++ {
+		if err := limiter.Spend(PointsGet); err != nil {
+			return []Record{}, "", err
+		}
+
 		q := u.Query()
 		q.Set("repo", client.Auth.Did)
 		q.Set("collection", "app.bsky.feed.post")
