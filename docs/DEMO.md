@@ -15,4 +15,6 @@ curl -v -H "Authorization: ${REFRESH_TOKEN}" -X PUT -d '{"enabled": true, "postT
 
 cd frontend
 bun dev # Now visit http://localhost:3000
+
+go run ./cmd/aeolius-deleter
 ```
