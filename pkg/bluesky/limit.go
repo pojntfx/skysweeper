@@ -17,9 +17,11 @@ const (
 type Limiter struct {
 	ctx context.Context
 
-	globalLimit         int
-	availablePoints     int
-	availablePointsLock *sync.Cond
+	globalLimit int
+
+	availablePoints int
+	spentPoints     int
+	pointsLock      *sync.Cond
 
 	ticker *time.Ticker
 
@@ -39,8 +41,9 @@ func NewLimiter(
 
 		globalLimit: globalLimit,
 
-		availablePoints:     globalLimit,
-		availablePointsLock: sync.NewCond(&sync.Mutex{}),
+		availablePoints: globalLimit,
+		spentPoints:     0,
+		pointsLock:      sync.NewCond(&sync.Mutex{}),
 
 		ticker: time.NewTicker(resetInterval),
 
@@ -54,23 +57,23 @@ func (l *Limiter) Open() {
 		case <-l.ctx.Done():
 			l.ticker.Stop()
 
-			l.availablePointsLock.L.Lock()
+			l.pointsLock.L.Lock()
 			l.availablePoints = -1
-			l.availablePointsLock.Broadcast()
-			l.availablePointsLock.L.Unlock()
+			l.pointsLock.Broadcast()
+			l.pointsLock.L.Unlock()
 
 			return
 		case <-l.ticker.C:
-			l.availablePointsLock.L.Lock()
+			l.pointsLock.L.Lock()
 			l.availablePoints = l.globalLimit
-			l.availablePointsLock.Broadcast()
-			l.availablePointsLock.L.Unlock()
+			l.pointsLock.Broadcast()
+			l.pointsLock.L.Unlock()
 		}
 	}
 }
 
 func (l *Limiter) Spend(points int) error {
-	l.availablePointsLock.L.Lock()
+	l.pointsLock.L.Lock()
 	if l.availablePoints-points <= 0 {
 		if l.onWaitingForReset != nil {
 			if err := l.onWaitingForReset(); err != nil {
@@ -78,16 +81,24 @@ func (l *Limiter) Spend(points int) error {
 			}
 		}
 
-		l.availablePointsLock.Wait()
+		l.pointsLock.Wait()
 	}
 
 	if l.availablePoints < 0 {
 		return context.Canceled // Context cancelled
 	}
 
-	l.availablePoints = l.availablePoints - points
+	l.availablePoints -= points
+	l.spentPoints += points
 
-	l.availablePointsLock.L.Unlock()
+	l.pointsLock.L.Unlock()
 
 	return nil
+}
+
+func (l *Limiter) GetSpendPoints() int {
+	l.pointsLock.L.Lock()
+	defer l.pointsLock.L.Unlock()
+
+	return l.spentPoints
 }

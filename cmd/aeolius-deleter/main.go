@@ -48,6 +48,7 @@ func main() {
 	auth.Handle = session.Handle
 	auth.Did = session.Did
 
+	throttled := 0
 	limiter := bluesky.NewLimiter(
 		ctx,
 
@@ -57,11 +58,15 @@ func main() {
 		func() error {
 			log.Println("Pausing until rate limit reset interval")
 
+			throttled++
+
 			return nil
 		},
 	)
 
 	go limiter.Open()
+
+	before := time.Now()
 
 	recordsToDelete, cursor, err := bluesky.GetPostsToDelete(
 		client,
@@ -80,4 +85,6 @@ func main() {
 	log.Println("Deleting", recordsToDelete)
 
 	log.Println("Setting refresh JWT to <redacted> and cursor to", cursor, "in database")
+
+	log.Println("Spent", limiter.GetSpendPoints(), "points in", time.Since(before), "while being throttled", throttled, "times")
 }
