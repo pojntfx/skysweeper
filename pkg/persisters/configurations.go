@@ -43,13 +43,15 @@ func (p *WorkerPersister) GetEnabledConfigurations(
 	return p.queries.GetEnabledConfigurations(ctx)
 }
 
-func (p *WorkerPersister) UpdateRefreshToken(
+func (p *WorkerPersister) UpdateRefreshTokenAndCursor(
 	ctx context.Context,
 	did string,
+	cursor string,
 	refreshJWT string,
 ) error {
-	return p.queries.UpdateConfigurationRefreshJWT(ctx, models.UpdateConfigurationRefreshJWTParams{
+	return p.queries.UpdateConfigurationRefreshJWTAndCursor(ctx, models.UpdateConfigurationRefreshJWTAndCursorParams{
 		RefreshJwt: refreshJWT,
+		Cursor:     cursor,
 		Did:        did,
 	})
 }

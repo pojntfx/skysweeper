@@ -10,6 +10,7 @@ type Configuration struct {
 	Did        string
 	Service    string
 	RefreshJwt string
+	Cursor     string
 	Enabled    bool
 	PostTtl    int32
 }

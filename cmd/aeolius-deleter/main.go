@@ -14,7 +14,6 @@ import (
 )
 
 func main() {
-	cursorFlag := flag.String("cursor", "", "Cursor from which point forwards posts should be considered for deletion")
 	rateLimitPointsDID := flag.Int("rate-limit-points-did", 200, "Maximum amount of rate limit points to spend per DID (see https://atproto.com/blog/rate-limits-pds-v3; must be less than 1666 per hour as of September 2023)")
 	rateLimitPointsGlobal := flag.Int("rate-limit-points-global", 2500, "Maximum amount of rate limit points to spend per rate limit reset interval for this IP (see https://atproto.com/blog/rate-limits-pds-v3; must be less than 3000 per hour as of September 2023)")
 	rateLimitResetInterval := flag.Duration("rate-limit-reset-interval", time.Minute*5, "Duration of a rate limit reset interval for this IP (see https://atproto.com/blog/rate-limits-pds-v3; 5 minutes as of September 2023)")
@@ -87,9 +86,9 @@ func main() {
 			client,
 
 			int(configuration.PostTtl),
-			*cursorFlag,
+			configuration.Cursor,
 			100,
-			*rateLimitPointsDID/100,
+			*rateLimitPointsDID,
 
 			limiter,
 		)
@@ -101,7 +100,16 @@ func main() {
 
 		log.Println("Deleting", recordsToDelete)
 
-		log.Println("Setting refresh JWT to <redacted> and cursor to", cursor, "in database")
+		if err := persister.UpdateRefreshTokenAndCursor(
+			ctx,
+			auth.Did,
+			cursor,
+			auth.RefreshJwt,
+		); err != nil {
+			log.Println("Could not update refresh token and cursor for DID", auth.Did, ", skipping:", err)
+
+			continue
+		}
 	}
 
 	log.Println("Spent", limiter.GetSpendPoints(), "points in", time.Since(before), "while being throttled", throttled, "times")

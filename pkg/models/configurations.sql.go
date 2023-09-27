@@ -20,7 +20,7 @@ func (q *Queries) DeleteConfiguration(ctx context.Context, did string) error {
 }
 
 const getConfiguration = `-- name: GetConfiguration :one
-select did, service, refresh_jwt, enabled, post_ttl
+select did, service, refresh_jwt, cursor, enabled, post_ttl
 from configurations
 where did = $1
 `
@@ -32,6 +32,7 @@ func (q *Queries) GetConfiguration(ctx context.Context, did string) (Configurati
 		&i.Did,
 		&i.Service,
 		&i.RefreshJwt,
+		&i.Cursor,
 		&i.Enabled,
 		&i.PostTtl,
 	)
@@ -39,7 +40,7 @@ func (q *Queries) GetConfiguration(ctx context.Context, did string) (Configurati
 }
 
 const getEnabledConfigurations = `-- name: GetEnabledConfigurations :many
-select did, service, refresh_jwt, enabled, post_ttl
+select did, service, refresh_jwt, cursor, enabled, post_ttl
 from configurations
 where enabled = true
 `
@@ -57,6 +58,7 @@ func (q *Queries) GetEnabledConfigurations(ctx context.Context) ([]Configuration
 			&i.Did,
 			&i.Service,
 			&i.RefreshJwt,
+			&i.Cursor,
 			&i.Enabled,
 			&i.PostTtl,
 		); err != nil {
@@ -73,19 +75,21 @@ func (q *Queries) GetEnabledConfigurations(ctx context.Context) ([]Configuration
 	return items, nil
 }
 
-const updateConfigurationRefreshJWT = `-- name: UpdateConfigurationRefreshJWT :exec
+const updateConfigurationRefreshJWTAndCursor = `-- name: UpdateConfigurationRefreshJWTAndCursor :exec
 update configurations
-set refresh_jwt = $1
-where did = $2
+set refresh_jwt = $1,
+    cursor = $2
+where did = $3
 `
 
-type UpdateConfigurationRefreshJWTParams struct {
+type UpdateConfigurationRefreshJWTAndCursorParams struct {
 	RefreshJwt string
+	Cursor     string
 	Did        string
 }
 
-func (q *Queries) UpdateConfigurationRefreshJWT(ctx context.Context, arg UpdateConfigurationRefreshJWTParams) error {
-	_, err := q.db.ExecContext(ctx, updateConfigurationRefreshJWT, arg.RefreshJwt, arg.Did)
+func (q *Queries) UpdateConfigurationRefreshJWTAndCursor(ctx context.Context, arg UpdateConfigurationRefreshJWTAndCursorParams) error {
+	_, err := q.db.ExecContext(ctx, updateConfigurationRefreshJWTAndCursor, arg.RefreshJwt, arg.Cursor, arg.Did)
 	return err
 }
 
@@ -94,16 +98,18 @@ insert into configurations (
         did,
         service,
         refresh_jwt,
+        cursor,
         enabled,
         post_ttl
     )
-values ($1, $2, $3, $4, $5) on conflict (did) do
+values ($1, $2, $3, '', $4, $5) on conflict (did) do
 update
 set service = excluded.service,
     refresh_jwt = excluded.refresh_jwt,
+    cursor = '',
     enabled = excluded.enabled,
     post_ttl = excluded.post_ttl
-returning did, service, refresh_jwt, enabled, post_ttl
+returning did, service, refresh_jwt, cursor, enabled, post_ttl
 `
 
 type UpsertConfigurationParams struct {
@@ -127,6 +133,7 @@ func (q *Queries) UpsertConfiguration(ctx context.Context, arg UpsertConfigurati
 		&i.Did,
 		&i.Service,
 		&i.RefreshJwt,
+		&i.Cursor,
 		&i.Enabled,
 		&i.PostTtl,
 	)
