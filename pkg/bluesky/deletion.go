@@ -1,14 +1,21 @@
 package bluesky
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
+	"github.com/bluesky-social/indigo/api/atproto"
 	"github.com/bluesky-social/indigo/util"
 	"github.com/bluesky-social/indigo/xrpc"
+)
+
+const (
+	collectionTypePost = "app.bsky.feed.post"
 )
 
 type repo struct {
@@ -58,7 +65,7 @@ l:
 
 		q := u.Query()
 		q.Set("repo", client.Auth.Did)
-		q.Set("collection", "app.bsky.feed.post")
+		q.Set("collection", collectionTypePost)
 		q.Set("reverse", "true")
 		q.Set("limit", fmt.Sprintf("%d", batchSize))
 		q.Set("cursor", cursor)
@@ -108,7 +115,69 @@ l:
 				break l
 			}
 		}
+
+		// Terminate if there are no more posts
+		if i > 0 && strings.TrimSpace(cursor) == "" {
+			break
+		}
 	}
 
 	return recordsToDelete, cursor, nil
+}
+
+func DeletePosts(
+	ctx context.Context,
+
+	client *xrpc.Client,
+
+	posts []Record,
+	batchSize int,
+
+	limiter *Limiter,
+) error {
+	if len(posts) <= 0 {
+		return nil
+	}
+
+	postsByDID := make(map[string][]Record)
+	for _, post := range posts {
+		postsByDID[post.DID] = append(postsByDID[post.DID], post)
+	}
+
+	for did, posts := range postsByDID {
+		var batches [][]Record
+		for i := 0; i < len(posts); i += batchSize {
+			end := i + batchSize
+			if end > len(posts) {
+				end = len(posts)
+			}
+
+			batches = append(batches, posts[i:end])
+		}
+
+		for _, batch := range batches {
+			var writeElems []*atproto.RepoApplyWrites_Input_Writes_Elem
+			for _, post := range batch {
+				writeElems = append(writeElems, &atproto.RepoApplyWrites_Input_Writes_Elem{
+					RepoApplyWrites_Delete: &atproto.RepoApplyWrites_Delete{
+						Collection: collectionTypePost,
+						Rkey:       post.Rkey,
+					},
+				})
+			}
+
+			if err := limiter.Spend(PointsDelete); err != nil {
+				return err
+			}
+
+			if err := atproto.RepoApplyWrites(ctx, client, &atproto.RepoApplyWrites_Input{
+				Repo:   did,
+				Writes: writeElems,
+			}); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
