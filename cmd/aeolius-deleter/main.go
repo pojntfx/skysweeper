@@ -20,6 +20,7 @@ func main() {
 	listRecordsLimit := flag.Int("list-records-limit", 100, "Limit of records to return per API call (see https://atproto.com/blog/rate-limits-pds-v3; 100 as of September 2023)")
 	applyWritesLimit := flag.Int("apply-writes-limit", 10, "Limit of records to apply writes for per API call (see https://atproto.com/blog/rate-limits-pds-v3; 10 as of September 2023)")
 	postgresUrl := flag.String("postgres-url", "postgresql://postgres@localhost:5432/aeolius?sslmode=disable", "PostgreSQL URL")
+	dryRun := flag.Bool("dry-run", true, "Whether to do a dry run (only fetch for posts to be deleted without actually deleting them)")
 
 	flag.Parse()
 
@@ -111,6 +112,8 @@ func main() {
 			postsToDelete,
 			*applyWritesLimit,
 
+			*dryRun,
+
 			limiter,
 		); err != nil {
 			log.Println("Could not delete posts for DID", auth.Did, ", skipping:", err)
@@ -130,5 +133,11 @@ func main() {
 		}
 	}
 
-	log.Println("Spent", limiter.GetSpendPoints(), "points in", time.Since(before), "while being throttled", throttled, "times to delete", deleted, "posts")
+	log.Println("Spent", limiter.GetSpendPoints(), "points in", time.Since(before), "while being throttled", throttled, "times to delete", deleted, "posts (dry run mode", func() string {
+		if *dryRun {
+			return "enabled)"
+		}
+
+		return "disabled)"
+	}())
 }

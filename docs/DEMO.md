@@ -16,5 +16,5 @@ curl -v -H "Authorization: ${REFRESH_TOKEN}" -X PUT -d '{"enabled": true, "postT
 cd frontend
 bun dev # Now visit http://localhost:3000
 
-go run ./cmd/aeolius-deleter
+go run ./cmd/aeolius-deleter # Append --dry-run=false to actually delete posts instead of just logging the execution plan
 ```

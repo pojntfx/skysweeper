@@ -133,6 +133,8 @@ func DeletePosts(
 	posts []Record,
 	batchSize int,
 
+	dryRun bool,
+
 	limiter *Limiter,
 ) error {
 	if len(posts) <= 0 {
@@ -166,15 +168,17 @@ func DeletePosts(
 				})
 			}
 
-			if err := limiter.Spend(PointsDelete); err != nil {
-				return err
-			}
+			if !dryRun {
+				if err := limiter.Spend(PointsDelete); err != nil {
+					return err
+				}
 
-			if err := atproto.RepoApplyWrites(ctx, client, &atproto.RepoApplyWrites_Input{
-				Repo:   did,
-				Writes: writeElems,
-			}); err != nil {
-				return err
+				if err := atproto.RepoApplyWrites(ctx, client, &atproto.RepoApplyWrites_Input{
+					Repo:   did,
+					Writes: writeElems,
+				}); err != nil {
+					return err
+				}
 			}
 		}
 	}
