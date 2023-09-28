@@ -17,6 +17,8 @@ func main() {
 	rateLimitPointsDID := flag.Int("rate-limit-points-did", 200, "Maximum amount of rate limit points to spend per DID (see https://atproto.com/blog/rate-limits-pds-v3; must be less than 1666 per hour as of September 2023)")
 	rateLimitPointsGlobal := flag.Int("rate-limit-points-global", 2500, "Maximum amount of rate limit points to spend per rate limit reset interval for this IP (see https://atproto.com/blog/rate-limits-pds-v3; must be less than 3000 per hour as of September 2023)")
 	rateLimitResetInterval := flag.Duration("rate-limit-reset-interval", time.Minute*5, "Duration of a rate limit reset interval for this IP (see https://atproto.com/blog/rate-limits-pds-v3; 5 minutes as of September 2023)")
+	listRecordsLimit := flag.Int("list-records-limit", 100, "Limit of records to return per API call (see https://atproto.com/blog/rate-limits-pds-v3; 100 as of September 2023)")
+	applyWritesLimit := flag.Int("apply-writes-limit", 10, "Limit of records to apply writes for per API call (see https://atproto.com/blog/rate-limits-pds-v3; 10 as of September 2023)")
 	postgresUrl := flag.String("postgres-url", "postgresql://postgres@localhost:5432/aeolius?sslmode=disable", "PostgreSQL URL")
 
 	flag.Parse()
@@ -58,6 +60,7 @@ func main() {
 		panic(err)
 	}
 
+	deleted := 0
 	for _, configuration := range configurations {
 		auth := &xrpc.AuthInfo{}
 
@@ -82,12 +85,12 @@ func main() {
 		auth.Handle = session.Handle
 		auth.Did = session.Did
 
-		recordsToDelete, cursor, err := bluesky.GetPostsToDelete(
+		postsToDelete, cursor, err := bluesky.GetPostsToDelete(
 			client,
 
 			int(configuration.PostTtl),
 			configuration.Cursor,
-			100,
+			*listRecordsLimit, // Limit as per https://atproto.com/blog/rate-limits-pds-v3
 			*rateLimitPointsDID,
 
 			limiter,
@@ -98,7 +101,22 @@ func main() {
 			continue
 		}
 
-		log.Println("Deleting", recordsToDelete)
+		deleted += len(postsToDelete)
+
+		if err := bluesky.DeletePosts(
+			ctx,
+
+			client,
+
+			postsToDelete,
+			*applyWritesLimit,
+
+			limiter,
+		); err != nil {
+			log.Println("Could not delete posts for DID", auth.Did, ", skipping:", err)
+
+			continue
+		}
 
 		if err := persister.UpdateRefreshTokenAndCursor(
 			ctx,
@@ -112,5 +130,5 @@ func main() {
 		}
 	}
 
-	log.Println("Spent", limiter.GetSpendPoints(), "points in", time.Since(before), "while being throttled", throttled, "times")
+	log.Println("Spent", limiter.GetSpendPoints(), "points in", time.Since(before), "while being throttled", throttled, "times to delete", deleted, "posts")
 }
