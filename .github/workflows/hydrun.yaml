@@ -33,12 +33,6 @@ jobs:
             flags: ""
             cmd: ./Hydrunfile go aeolius-worker
             dst: out/*
-          - id: go-aeolius-client
-            src: .
-            os: golang:bookworm
-            flags: ""
-            cmd: ./Hydrunfile go aeolius-client
-            dst: out/*
 
     steps:
       - name: Maximize build space

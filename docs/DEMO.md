@@ -16,5 +16,8 @@ curl -v -H "Authorization: ${REFRESH_TOKEN}" -X PUT -d '{"enabled": true, "postT
 cd frontend
 bun dev # Now visit http://localhost:3000
 
-go run ./cmd/aeolius-deleter # Append --dry-run=false to actually delete posts instead of just logging the execution plan
+export API_KEY='supersecureapikey'
+go run ./cmd/aeolius-worker --api-key "${API_KEY}" # Append --dry-run=false to actually delete posts instead of just logging the execution plan
+
+curl -v -H "Authorization: Bearer ${API_KEY}" -X DELETE http://localhost:1338/posts
 ```
