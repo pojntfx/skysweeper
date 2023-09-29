@@ -57,6 +57,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PrivacyPolicy } from "@/components/ui/privacy-policy";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { useAPI } from "@/hooks/api";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -70,18 +72,20 @@ import {
   Moon,
   MoonStar,
   Save,
+  Scale,
   Sun,
   TrashIcon,
   User,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useLocalStorage } from "usehooks-ts";
 import * as z from "zod";
 import logoDark from "../assets/logo-dark.png";
 import logoLight from "../assets/logo-light.png";
+import { Separator } from "@/components/ui/separator";
 
 const setupFormSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -89,6 +93,8 @@ const setupFormSchema = z.object({
 
   service: z.string().min(1, "Service is required"),
   aeoliusAPI: z.string().min(1, "Aeolius API is required"),
+
+  acceptedPrivacyPolicy: z.literal<boolean>(true),
 });
 
 const configurationFormSchema = z.object({
@@ -103,6 +109,7 @@ export default function Home() {
   const { setTheme } = useTheme();
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [privacyPolicyDialogOpen, setPrivacyPolicyDialogOpen] = useState(false);
 
   const [username, setUsername] = useLocalStorage("aeolius.username", "");
   const [password, setPassword] = useLocalStorage("aeolius.password", "");
@@ -124,6 +131,8 @@ export default function Home() {
 
       service,
       aeoliusAPI,
+
+      acceptedPrivacyPolicy: false,
     },
   });
 
@@ -223,7 +232,7 @@ export default function Home() {
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger>
                       <Database className="mr-2 h-4 w-4" />
-                      <span>Privacy</span>
+                      <span className="mr-2">Your Data</span>
                     </DropdownMenuSubTrigger>
 
                     <DropdownMenuPortal>
@@ -463,8 +472,8 @@ export default function Home() {
         </main>
       </div>
 
-      <div className="fixed bottom-0 w-full">
-        <footer className="flex justify-between items-center py-6 container">
+      <div className="fixed bottom-0 w-full overflow-x-auto">
+        <footer className="flex justify-between items-center py-6 container pr-0">
           <a
             href="https://github.com/pojntfx/aeolius"
             target="_blank"
@@ -473,13 +482,25 @@ export default function Home() {
             © 2023 Felicitas Pojtinger
           </a>
 
-          <a
-            href="https://felicitas.pojtinger.com/imprint"
-            target="_blank"
-            className="hover:underline"
-          >
-            Imprint
-          </a>
+          <div className="flex h-5 items-center space-x-4 text-sm pr-8">
+            <Button
+              variant="link"
+              className="p-0 h-auto font-normal"
+              onClick={() => setPrivacyPolicyDialogOpen((v) => !v)}
+            >
+              Privacy
+            </Button>
+
+            <Separator orientation="vertical" />
+
+            <a
+              href="https://felicitas.pojtinger.com/imprint"
+              target="_blank"
+              className="hover:underline"
+            >
+              Imprint
+            </a>
+          </div>
         </footer>
       </div>
 
@@ -492,13 +513,13 @@ export default function Home() {
             <Image
               src={logoDark}
               alt="Aeolius Logo"
-              className="h-10 w-auto logo-dark"
+              className="h-10 object-contain logo-dark"
             />
 
             <Image
               src={logoLight}
               alt="Aeolius Logo"
-              className="h-10 w-auto logo-light"
+              className="h-10 object-contain logo-light"
             />
 
             <DialogTitle className="pt-4">Login</DialogTitle>
@@ -563,6 +584,41 @@ export default function Home() {
                     <FormMessage />
                   </FormItem>
                 )}
+              />
+
+              <FormField
+                control={setupForm.control}
+                name="acceptedPrivacyPolicy"
+                render={({ field }) => {
+                  const { value, onChange, ...rest } = field;
+
+                  return (
+                    <FormItem className="items-top flex space-x-2 space-y-0 items-center">
+                      <FormControl>
+                        <Checkbox
+                          checked={value}
+                          onCheckedChange={onChange}
+                          {...rest}
+                        />
+                      </FormControl>
+
+                      <div className="grid gap-1.5 leading-none">
+                        <FormLabel className="text-sm font-medium leading-none">
+                          I have read and agree to the{" "}
+                          <Button
+                            variant="link"
+                            className="p-0 underline h-auto font-normal"
+                            onClick={() =>
+                              setPrivacyPolicyDialogOpen((v) => !v)
+                            }
+                          >
+                            privacy policy
+                          </Button>
+                        </FormLabel>
+                      </div>
+                    </FormItem>
+                  );
+                }}
               />
 
               <Accordion type="single" collapsible>
@@ -652,6 +708,21 @@ export default function Home() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog
+        onOpenChange={(v) => setPrivacyPolicyDialogOpen(v)}
+        open={privacyPolicyDialogOpen}
+      >
+        <DialogContent className="max-w-[720px] h-[720px] max-h-screen">
+          <DialogHeader>
+            <DialogTitle>Privacy Policy</DialogTitle>
+          </DialogHeader>
+
+          <ScrollArea className="privacy-policy">
+            <PrivacyPolicy />
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

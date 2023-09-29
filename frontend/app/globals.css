@@ -343,3 +343,13 @@ body {
     padding-bottom: 88px;
   }
 }
+
+.privacy-policy {
+  h4 {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
