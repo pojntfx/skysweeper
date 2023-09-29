@@ -80,8 +80,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useLocalStorage } from "usehooks-ts";
 import * as z from "zod";
-import logoDark from "../assets/logo-dark.svg";
-import logoLight from "../assets/logo-light.svg";
+import logoDark from "../assets/logo-dark.png";
+import logoLight from "../assets/logo-light.png";
 
 const setupFormSchema = z.object({
   username: z.string().min(1, "Username is required"),
