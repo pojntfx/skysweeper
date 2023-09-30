@@ -1,6 +1,10 @@
 package cmd
 
 import (
+	"log"
+	"net"
+	"os"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -9,6 +13,7 @@ import (
 
 const (
 	postgresURLFlag = "postgres-url"
+	laddrFlag       = "laddr"
 )
 
 var rootCmd = &cobra.Command{
@@ -25,12 +30,35 @@ https://github.com/pojntfx/aeolius`,
 			return err
 		}
 
+		if v := os.Getenv("DATABASE_URL"); v != "" {
+			log.Println("Using database address from DATABASE_URL env variable")
+
+			viper.Set(postgresURLFlag, v)
+		}
+
+		if v := os.Getenv("PORT"); v != "" {
+			log.Println("Using port from PORT env variable")
+
+			la, err := net.ResolveTCPAddr("tcp", viper.GetString(laddrFlag))
+			if err != nil {
+				return err
+			}
+
+			p, err := strconv.Atoi(v)
+			if err != nil {
+				return err
+			}
+
+			la.Port = p
+			viper.Set(laddrFlag, la.String())
+		}
+
 		return nil
 	},
 }
 
 func Execute() error {
-	rootCmd.PersistentFlags().String(postgresURLFlag, "postgresql://postgres@localhost:5432/aeolius?sslmode=disable", "PostgreSQL URL")
+	rootCmd.PersistentFlags().String(postgresURLFlag, "postgresql://postgres@localhost:5432/aeolius?sslmode=disable", "PostgreSQL URL (can also be set using `DATABASE_URL` env variable)")
 
 	if err := viper.BindPFlags(rootCmd.PersistentFlags()); err != nil {
 		return err

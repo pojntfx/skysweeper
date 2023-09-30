@@ -20,7 +20,6 @@ import (
 )
 
 const (
-	laddrFlag  = "laddr"
 	apiKeyFlag = "api-key"
 
 	rateLimitPointsDIDFlag     = "rate-limit-points-did"
