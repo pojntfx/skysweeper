@@ -21,17 +21,11 @@ jobs:
             flags: ""
             cmd: GOFLAGS="-short" ./Hydrunfile test
             dst: out/nonexistent
-          - id: go-aeolius-manager
+          - id: go-aeolius-server
             src: .
             os: golang:bookworm
             flags: ""
-            cmd: ./Hydrunfile go aeolius-manager
-            dst: out/*
-          - id: go-aeolius-worker
-            src: .
-            os: golang:bookworm
-            flags: ""
-            cmd: ./Hydrunfile go aeolius-worker
+            cmd: ./Hydrunfile go aeolius-server
             dst: out/*
 
     steps:

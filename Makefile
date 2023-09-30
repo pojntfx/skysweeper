@@ -5,7 +5,7 @@ OUTPUT_DIR ?= out
 DST ?=
 
 # Private variables
-obj = aeolius-manager aeolius-worker
+obj = aeolius-server
 all: $(addprefix build/,$(obj))
 
 # Build
