@@ -1,0 +1,15 @@
+name: sweeper CI
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger sweeper worker
+        env:
+          SKYSWEEPER_API_KEY: ${{ secrets.SKYSWEEPER_API_KEY }}
+        run: |
+          curl -v -H "Authorization: Bearer ${SKYSWEEPER_API_KEY}" -X DELETE https://worker.skysweeper.p8.lu/posts
