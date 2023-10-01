@@ -120,7 +120,7 @@ export default function Home() {
   );
   const [skysweeperAPI, setSkySweeperAPI] = useLocalStorage(
     "skysweeper.skysweeperURL",
-    process.env.SKYSWEEPER_API_DEFAULT || "https://api.skysweeper.p8s.lu"
+    process.env.SKYSWEEPER_API_DEFAULT || "https://manager.skysweeper.p8.lu"
   );
 
   const setupForm = useForm<z.infer<typeof setupFormSchema>>({
