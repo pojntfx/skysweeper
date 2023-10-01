@@ -17,13 +17,13 @@ const (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "aeolius-server",
-	Short: "Start Aeolius managers and workers",
+	Use:   "skysweeper-server",
+	Short: "Start SkySweeper managers and workers",
 	Long: `Automatically delete your old skeets from Bluesky.
 Find more information at:
-https://github.com/pojntfx/aeolius`,
+https://github.com/pojntfx/skysweeper`,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		viper.SetEnvPrefix("aeolius")
+		viper.SetEnvPrefix("skysweeper")
 		viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_", ".", "_"))
 
 		if err := viper.BindPFlags(cmd.PersistentFlags()); err != nil {
@@ -58,7 +58,7 @@ https://github.com/pojntfx/aeolius`,
 }
 
 func Execute() error {
-	rootCmd.PersistentFlags().String(postgresURLFlag, "postgresql://postgres@localhost:5432/aeolius?sslmode=disable", "PostgreSQL URL (can also be set using `DATABASE_URL` env variable)")
+	rootCmd.PersistentFlags().String(postgresURLFlag, "postgresql://postgres@localhost:5432/skysweeper?sslmode=disable", "PostgreSQL URL (can also be set using `DATABASE_URL` env variable)")
 
 	if err := viper.BindPFlags(rootCmd.PersistentFlags()); err != nil {
 		return err

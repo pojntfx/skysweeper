@@ -8,7 +8,7 @@ export const useAPI = (
   appPassword: string,
 
   service: string,
-  aeoliusAPI: string,
+  skysweeperAPI: string,
 
   clearAppPassword: () => void,
 
@@ -83,19 +83,19 @@ export const useAPI = (
 
   const [api, setAPI] = useState<ConfigurationRestAPI>();
   useAsyncEffect(() => {
-    if (!aeoliusAPI || !service || !accessJWT || !refreshJWT) {
+    if (!skysweeperAPI || !service || !accessJWT || !refreshJWT) {
       return;
     }
 
     setAPI(
       new ConfigurationRestAPI(
-        new URL(aeoliusAPI),
+        new URL(skysweeperAPI),
         service,
         accessJWT,
         refreshJWT
       )
     );
-  }, [aeoliusAPI, service, accessJWT, refreshJWT]);
+  }, [skysweeperAPI, service, accessJWT, refreshJWT]);
 
   const [enabled, setEnabled] = useState(false);
   const [postTTL, setPostTTL] = useState(6);

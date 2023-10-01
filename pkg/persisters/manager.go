@@ -5,8 +5,8 @@ package persisters
 import (
 	"database/sql"
 
-	"github.com/pojntfx/aeolius/pkg/migrations"
-	"github.com/pojntfx/aeolius/pkg/models"
+	"github.com/pojntfx/skysweeper/pkg/migrations"
+	"github.com/pojntfx/skysweeper/pkg/models"
 	"github.com/pressly/goose/v3"
 
 	_ "github.com/lib/pq"

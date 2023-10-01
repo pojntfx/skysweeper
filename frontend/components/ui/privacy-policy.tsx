@@ -173,7 +173,7 @@ export const PrivacyPolicy = () => (
     <p>Phone: +49 152 33842326</p>
     <p>Email: felicitas@pojtinger.com</p>
     <p>
-      Website: <a href="https://aeolius.p8.lu/">https://aeolius.p8.lu/</a>
+      Website: <a href="https://skysweeper.p8.lu/">https://skysweeper.p8.lu/</a>
     </p>
     <h4 id="3-name-and-address-of-the-data-protection-officer">
       3. Name and Address of the Data Protection Officer
@@ -187,7 +187,7 @@ export const PrivacyPolicy = () => (
     <p>Phone: +49 152 33842326</p>
     <p>Email: felicitas@pojtinger.com</p>
     <p>
-      Website: <a href="https://aeolius.p8.lu/">https://aeolius.p8.lu/</a>
+      Website: <a href="https://skysweeper.p8.lu/">https://skysweeper.p8.lu/</a>
     </p>
     <p>
       Any data subject may, at any time, contact our Data Protection Officer

@@ -1,4 +1,4 @@
-module github.com/pojntfx/aeolius
+module github.com/pojntfx/skysweeper
 
 go 1.21.0
 

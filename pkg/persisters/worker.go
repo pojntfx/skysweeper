@@ -3,7 +3,7 @@ package persisters
 import (
 	"database/sql"
 
-	"github.com/pojntfx/aeolius/pkg/models"
+	"github.com/pojntfx/skysweeper/pkg/models"
 
 	_ "github.com/lib/pq"
 )

@@ -7,7 +7,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Aeolius",
+  title: "SkySweeper",
   description: "Automatically delete your old skeets from Bluesky.",
 };
 

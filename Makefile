@@ -5,7 +5,7 @@ OUTPUT_DIR ?= out
 DST ?=
 
 # Private variables
-obj = aeolius-server
+obj = skysweeper-server
 all: $(addprefix build/,$(obj))
 
 # Build

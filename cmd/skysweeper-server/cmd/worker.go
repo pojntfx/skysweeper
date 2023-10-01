@@ -13,8 +13,8 @@ import (
 
 	"github.com/bluesky-social/indigo/api/atproto"
 	"github.com/bluesky-social/indigo/xrpc"
-	"github.com/pojntfx/aeolius/pkg/bluesky"
-	"github.com/pojntfx/aeolius/pkg/persisters"
+	"github.com/pojntfx/skysweeper/pkg/bluesky"
+	"github.com/pojntfx/skysweeper/pkg/persisters"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -46,7 +46,7 @@ type Statistics struct {
 var workerCmd = &cobra.Command{
 	Use:     "worker",
 	Aliases: []string{"w"},
-	Short:   "Start an Aeolius worker",
+	Short:   "Start an SkySweeper worker",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := viper.BindPFlags(cmd.PersistentFlags()); err != nil {
 			return err

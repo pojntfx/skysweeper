@@ -3,7 +3,7 @@ package persisters
 import (
 	"context"
 
-	"github.com/pojntfx/aeolius/pkg/models"
+	"github.com/pojntfx/skysweeper/pkg/models"
 )
 
 func (p *ManagerPersister) UpsertConfiguration(

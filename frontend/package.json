@@ -1,5 +1,5 @@
 {
-  "name": "@pojntfx/aeolius-frontend",
+  "name": "@pojntfx/skysweeper-frontend",
   "version": "0.1.0",
   "description": "Automatically delete your old skeets from Bluesky.",
   "scripts": {

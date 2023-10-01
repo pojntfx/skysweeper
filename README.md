@@ -1,4 +1,4 @@
-# Aeolius
+# SkySweeper
 
 ![Logo](./docs/logo-readme.png)
 
@@ -10,6 +10,6 @@ Automatically delete your old skeets from Bluesky.
 
 ## License
 
-Aeolius (c) 2023 Felicitas Pojtinger and contributors
+SkySweeper (c) 2023 Felicitas Pojtinger and contributors
 
 SPDX-License-Identifier: AGPL-3.0

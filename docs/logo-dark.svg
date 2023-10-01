@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="1562.7883"
+   width="2343.0876"
    height="512.00006"
-   viewBox="0 0 413.48752 135.46668"
+   viewBox="0 0 619.9416 135.46668"
    version="1.1"
    id="svg5"
    xml:space="preserve"
@@ -28,9 +28,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="true"
-     inkscape:zoom="0.4206238"
-     inkscape:cx="552.75046"
-     inkscape:cy="319.76317"
+     inkscape:zoom="0.29742594"
+     inkscape:cx="107.58981"
+     inkscape:cy="364.7967"
      inkscape:window-width="2560"
      inkscape:window-height="1371"
      inkscape:window-x="0"
@@ -43,7 +43,7 @@
        id="grid365"
        spacingx="3.96875"
        spacingy="3.96875"
-       originx="-35.721987"
+       originx="-35.72199"
        originy="-79.373231"
        units="mm"
        visible="true" /></sodipodi:namedview><defs
@@ -230,15 +230,15 @@
      id="layer1"
      transform="translate(-35.718761,-79.374992)"><text
        xml:space="preserve"
-       style="font-size:78.5714px;font-family:Overpass;-inkscape-font-specification:Overpass;fill:#ffffff;stroke-width:0.026536;-inkscape-stroke:none;stop-color:#000000"
-       x="183.35872"
+       style="font-size:78.5714px;font-family:Overpass;-inkscape-font-specification:Overpass;fill:#f9f9f9;stroke-width:0.026536;-inkscape-stroke:none;stop-color:#000000"
+       x="193.94191"
        y="171.77029"
        id="text452"><tspan
          sodipodi:role="line"
          id="tspan450"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Inter;-inkscape-font-specification:Inter;fill:#ffffff;stroke-width:0.026536"
-         x="183.35872"
-         y="171.77029">Aeolius</tspan></text><ellipse
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Inter;-inkscape-font-specification:Inter;fill:#f9f9f9;stroke-width:0.026536"
+         x="193.94191"
+         y="171.77029">SkySweeper</tspan></text><ellipse
        style="fill:#ffffff;fill-opacity:1;stroke-width:0.0626064;-inkscape-stroke:none;stop-color:#000000"
        id="path15885"
        cx="103.4521"

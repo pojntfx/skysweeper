@@ -12,7 +12,7 @@ import (
 
 	"github.com/bluesky-social/indigo/api/atproto"
 	"github.com/bluesky-social/indigo/xrpc"
-	"github.com/pojntfx/aeolius/pkg/persisters"
+	"github.com/pojntfx/skysweeper/pkg/persisters"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -43,7 +43,7 @@ type Configuration struct {
 var managerCmd = &cobra.Command{
 	Use:     "manager",
 	Aliases: []string{"w"},
-	Short:   "Start an Aeolius manager",
+	Short:   "Start an SkySweeper manager",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := viper.BindPFlags(cmd.PersistentFlags()); err != nil {
 			return err
@@ -201,7 +201,7 @@ var managerCmd = &cobra.Command{
 func init() {
 	managerCmd.PersistentFlags().String(laddrFlag, "localhost:1337", "Listen address")
 
-	managerCmd.PersistentFlags().String(originFlag, "https://aeolius.p8.lu", "Allowed CORS origin")
+	managerCmd.PersistentFlags().String(originFlag, "https://skysweeper.p8.lu", "Allowed CORS origin")
 
 	viper.AutomaticEnv()
 

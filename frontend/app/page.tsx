@@ -92,7 +92,7 @@ const setupFormSchema = z.object({
   password: z.string().min(1, "App password is required"),
 
   service: z.string().min(1, "Service is required"),
-  aeoliusAPI: z.string().min(1, "Aeolius API is required"),
+  skysweeperAPI: z.string().min(1, "SkySweeper API is required"),
 
   acceptedPrivacyPolicy: z.literal<boolean>(true),
 });
@@ -111,16 +111,16 @@ export default function Home() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [privacyPolicyDialogOpen, setPrivacyPolicyDialogOpen] = useState(false);
 
-  const [username, setUsername] = useLocalStorage("aeolius.username", "");
-  const [password, setPassword] = useLocalStorage("aeolius.password", "");
+  const [username, setUsername] = useLocalStorage("skysweeper.username", "");
+  const [password, setPassword] = useLocalStorage("skysweeper.password", "");
 
   const [service, setService] = useLocalStorage(
-    "aeolius.service",
-    process.env.AEOLIUS_SERVICE_DEFAULT || "https://bsky.social"
+    "skysweeper.service",
+    process.env.SKYSWEEPER_SERVICE_DEFAULT || "https://bsky.social"
   );
-  const [aeoliusAPI, setAeoliusAPI] = useLocalStorage(
-    "aeolius.aeoliusURL",
-    process.env.AEOLIUS_API_DEFAULT || "https://api.aeolius.p8s.lu"
+  const [skysweeperAPI, setSkySweeperAPI] = useLocalStorage(
+    "skysweeper.skysweeperURL",
+    process.env.SKYSWEEPER_API_DEFAULT || "https://api.skysweeper.p8s.lu"
   );
 
   const setupForm = useForm<z.infer<typeof setupFormSchema>>({
@@ -130,7 +130,7 @@ export default function Home() {
       password,
 
       service,
-      aeoliusAPI,
+      skysweeperAPI,
 
       acceptedPrivacyPolicy: false,
     },
@@ -153,7 +153,7 @@ export default function Home() {
     username,
     password,
     service,
-    aeoliusAPI,
+    skysweeperAPI,
     () => setPassword(""),
     (err, loggedOut) =>
       loggedOut
@@ -194,7 +194,7 @@ export default function Home() {
           {signedIn && (
             <Image
               src={logoDark}
-              alt="Aeolius Logo"
+              alt="SkySweeper Logo"
               className="h-10 w-auto mr-4 logo-dark"
             />
           )}
@@ -202,7 +202,7 @@ export default function Home() {
           {signedIn && (
             <Image
               src={logoLight}
-              alt="Aeolius Logo"
+              alt="SkySweeper Logo"
               className="h-10 w-auto mr-4 logo-light"
             />
           )}
@@ -254,7 +254,7 @@ export default function Home() {
                             const a = document.createElement("a");
 
                             a.href = url;
-                            a.download = "aeolius.json";
+                            a.download = "skysweeper.json";
                             a.click();
 
                             URL.revokeObjectURL(url);
@@ -395,7 +395,7 @@ export default function Home() {
                               <FormLabel>Maximum post age</FormLabel>
 
                               <FormDescription>
-                                Aeolius will periodically scan your skeets, and
+                                SkySweeper will periodically scan your skeets, and
                                 if they are older than the maximum post age it
                                 will delete them for you automatically.
                               </FormDescription>
@@ -441,13 +441,13 @@ export default function Home() {
             <>
               <Image
                 src={logoDark}
-                alt="Aeolius Logo"
+                alt="SkySweeper Logo"
                 className="h-20 w-auto logo-dark"
               />
 
               <Image
                 src={logoLight}
-                alt="Aeolius Logo"
+                alt="SkySweeper Logo"
                 className="h-20 w-auto logo-light"
               />
 
@@ -475,7 +475,7 @@ export default function Home() {
       <div className="fixed bottom-0 w-full overflow-x-auto">
         <footer className="flex justify-between items-center py-6 container pr-0">
           <a
-            href="https://github.com/pojntfx/aeolius"
+            href="https://github.com/pojntfx/skysweeper"
             target="_blank"
             className="hover:underline whitespace-nowrap mr-4"
           >
@@ -512,19 +512,19 @@ export default function Home() {
           <DialogHeader>
             <Image
               src={logoDark}
-              alt="Aeolius Logo"
+              alt="SkySweeper Logo"
               className="h-10 object-contain logo-dark"
             />
 
             <Image
               src={logoLight}
-              alt="Aeolius Logo"
+              alt="SkySweeper Logo"
               className="h-10 object-contain logo-light"
             />
 
             <DialogTitle className="pt-4">Login</DialogTitle>
             <DialogDescription>
-              Aeolius needs access to your Bluesky account in order to delete
+              SkySweeper needs access to your Bluesky account in order to delete
               posts on your behalf.
             </DialogDescription>
           </DialogHeader>
@@ -536,7 +536,7 @@ export default function Home() {
                 setPassword(v.password);
 
                 setService(v.service);
-                setAeoliusAPI(v.aeoliusAPI);
+                setSkySweeperAPI(v.skysweeperAPI);
 
                 setLoginDialogOpen(false);
               })}
@@ -647,13 +647,13 @@ export default function Home() {
 
                     <FormField
                       control={setupForm.control}
-                      name="aeoliusAPI"
+                      name="skysweeperAPI"
                       render={({ field }) => (
                         <FormItem className="mt-4">
-                          <FormLabel>Aeolius API</FormLabel>
+                          <FormLabel>SkySweeper API</FormLabel>
 
                           <FormDescription>
-                            The URL that Aeolius&apos;s API is hosted on; most
+                            The URL that SkySweeper&apos;s API is hosted on; most
                             users don&apos;t need to change this.
                           </FormDescription>
 
@@ -686,7 +686,7 @@ export default function Home() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete your Aeolius account and remove your
+              This will permanently delete your SkySweeper account and remove your
               data from our servers. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>

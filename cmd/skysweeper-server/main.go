@@ -1,6 +1,6 @@
 package main
 
-import "github.com/pojntfx/aeolius/cmd/aeolius-server/cmd"
+import "github.com/pojntfx/skysweeper/cmd/skysweeper-server/cmd"
 
 func main() {
 	if err := cmd.Execute(); err != nil {

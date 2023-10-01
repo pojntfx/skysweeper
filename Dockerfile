@@ -11,7 +11,7 @@ RUN make
 
 # Extract the release
 RUN mkdir -p /out
-RUN cp out/aeolius-server /out/aeolius-server
+RUN cp out/skysweeper-server /out/skysweeper-server
 
 # Release container
 FROM debian:bookworm
@@ -21,6 +21,6 @@ RUN apt update
 RUN apt install -y ca-certificates
 
 # Add the release
-COPY --from=build /out/aeolius-server /usr/local/bin/aeolius-server
+COPY --from=build /out/skysweeper-server /usr/local/bin/skysweeper-server
 
-CMD /usr/local/bin/aeolius-server
+CMD /usr/local/bin/skysweeper-server
