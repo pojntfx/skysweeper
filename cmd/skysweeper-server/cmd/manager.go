@@ -199,7 +199,7 @@ var managerCmd = &cobra.Command{
 }
 
 func init() {
-	managerCmd.PersistentFlags().String(laddrFlag, "localhost:1337", "Listen address")
+	managerCmd.PersistentFlags().String(laddrFlag, ":1337", "Listen address")
 
 	managerCmd.PersistentFlags().String(originFlag, "https://skysweeper.p8.lu", "Allowed CORS origin")
 

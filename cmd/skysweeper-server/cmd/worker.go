@@ -241,7 +241,7 @@ var workerCmd = &cobra.Command{
 }
 
 func init() {
-	workerCmd.PersistentFlags().String(laddrFlag, "localhost:1338", "Listen address")
+	workerCmd.PersistentFlags().String(laddrFlag, ":1338", "Listen address")
 	workerCmd.PersistentFlags().String(apiKeyFlag, "", "API key to check incoming requests for")
 
 	workerCmd.PersistentFlags().Int(rateLimitPointsDIDFlag, 200, "Maximum amount of rate limit points to spend per DID (see https://atproto.com/blog/rate-limits-pds-v3; must be less than 1666 per hour as of September 2023)")
