@@ -28,10 +28,6 @@ Click on an image to see a larger version.
 <img src="./docs/screenshot-login-dark.png" width="45%" alt="Screenshot of the login dark screen" title="Screenshot of the login dark screen">
 </a>
 
-<a style="display:inline" href="./docs/screenshot-datacontrols.png?raw=true">
-<img src="./docs/screenshot-datacontrols.png" width="45%" alt="Screenshot of the data controls screen" title="Screenshot of the data controls screen">
-</a>
-
 <a style="display:inline" href="./docs/screenshot-disabled.png?raw=true">
 <img src="./docs/screenshot-disabled.png" width="45%" alt="Screenshot of the disabled screen" title="Screenshot of the disabled screen">
 </a>

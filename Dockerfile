@@ -7,7 +7,8 @@ WORKDIR /data
 
 # Build the release
 COPY . .
-RUN make
+RUN make depend/cli
+RUN make build/cli
 
 # Extract the release
 RUN mkdir -p /out

@@ -2,25 +2,47 @@
 
 set -e
 
-# Test
-if [ "$1" = "test" ]; then
+# Test CLI
+if [ "$1" = "test/cli" ]; then
+    # Install native dependencies
+    apt update
+    apt install -y make git
+
     # Configure Git
     git config --global --add safe.directory '*'
 
     # Generate dependencies
-    make depend
+    make depend/cli
 
     # Run tests
-    make test
+    make test/cli
 
     exit 0
 fi
 
-# Go
-if [ "$1" = "go" ]; then
+# Test PWA
+if [ "$1" = "test/pwa" ]; then
     # Install native dependencies
     apt update
-    apt install -y curl make
+    apt install -y make git
+
+    # Configure Git
+    git config --global --add safe.directory '*'
+
+    # Generate dependencies
+    make depend/pwa
+
+    # Run tests
+    make test/pwa
+
+    exit 0
+fi
+
+# Build CLI
+if [ "$1" = "build/cli" ]; then
+    # Install native dependencies
+    apt update
+    apt install -y curl make git
 
     # Install bagop
     curl -L -o /tmp/bagop "https://github.com/pojntfx/bagop/releases/latest/download/bagop.linux-$(uname -m)"
@@ -30,10 +52,28 @@ if [ "$1" = "go" ]; then
     git config --global --add safe.directory '*'
 
     # Generate dependencies
-    make depend
+    make depend/cli
 
     # Build
-    CGO_ENABLED=0 bagop -j "$(nproc)" -b "$2" -x '(android/*|ios/*|plan9/*|aix/*|linux/loong64|freebsd/riscv64|wasip1/wasm)' -p "make build/$2 DST=\$DST" -d out
+    CGO_ENABLED=0 bagop -j "$(nproc)" -b "$2" -x '(android/*|ios/*|plan9/*|aix/*|linux/loong64|freebsd/riscv64|wasip1/wasm)' -p "make build/cli/$2 DST=\$DST" -d out
+
+    exit 0
+fi
+
+# Build PWA
+if [ "$1" = "build/pwa" ]; then
+    # Install native dependencies
+    apt update
+    apt install -y make git
+
+    # Configure Git
+    git config --global --add safe.directory '*'
+
+    # Generate dependencies
+    make depend/pwa
+
+    # Build
+    make build/pwa
 
     exit 0
 fi

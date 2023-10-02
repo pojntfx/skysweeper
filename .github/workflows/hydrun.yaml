@@ -15,17 +15,29 @@ jobs:
     strategy:
       matrix:
         target:
-          - id: test
+          - id: test-cli
             src: .
             os: golang:bookworm
             flags: ""
-            cmd: GOFLAGS="-short" ./Hydrunfile test
+            cmd: GOFLAGS="-short" ./Hydrunfile test/cli
             dst: out/nonexistent
-          - id: go-skysweeper-server
+          - id: test-pwa
+            src: .
+            os: oven/bun:canary
+            flags: ""
+            cmd: ./Hydrunfile test/pwa
+            dst: out/nonexistent
+          - id: build-cli-skysweeper-server
             src: .
             os: golang:bookworm
             flags: ""
-            cmd: ./Hydrunfile go skysweeper-server
+            cmd: ./Hydrunfile build/cli skysweeper-server
+            dst: out/*
+          - id: build-pwa
+            src: .
+            os: oven/bun:canary
+            flags: ""
+            cmd: ./Hydrunfile build/pwa
             dst: out/*
 
     steps:
