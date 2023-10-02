@@ -25,6 +25,7 @@ endif
 
 build/pwa:
 	cd frontend && bun run build
+	mkdir -p $(OUTPUT_DIR)
 	tar -cvzf $(OUTPUT_DIR)/frontend.tar.gz -C frontend/out .
 
 # Install
