@@ -4,9 +4,25 @@
 
 Automatically delete your old skeets from Bluesky.
 
+[![hydrun CI](https://github.com/pojntfx/skysweeper/actions/workflows/hydrun.yaml/badge.svg)](https://github.com/pojntfx/skysweeper/actions/workflows/hydrun.yaml)
+[![Docker CI](https://github.com/pojntfx/skysweeper/actions/workflows/docker.yaml/badge.svg)](https://github.com/pojntfx/skysweeper/actions/workflows/docker.yaml)
+[![sweeper CI](https://github.com/pojntfx/skysweeper/actions/workflows/sweeper.yaml/badge.svg)](https://github.com/pojntfx/skysweeper/actions/workflows/sweeper.yaml)
+![Go Version](https://img.shields.io/badge/go%20version-%3E=1.21-61CFDD.svg)
+[![Go Reference](https://pkg.go.dev/badge/github.com/pojntfx/skysweeper.svg)](https://pkg.go.dev/github.com/pojntfx/skysweeper)
+[![Matrix](https://img.shields.io/matrix/skysweeper:matrix.org)](https://matrix.to/#/#skysweeper:matrix.org?via=matrix.org)
+[![Binary Downloads](https://img.shields.io/github/downloads/pojntfx/skysweeper/total?label=binary%20downloads)](https://github.com/pojntfx/skysweeper/releases)
+
 ## Overview
 
 🚧 This project is a work-in-progress! Instructions will be added as soon as it is usable. 🚧
+
+## Installation
+
+SkySweeper is available to the public and can be used by opening it in a browser:
+
+<a href="https://skysweeper.p8.lu/"><img src="https://github.com/pojntfx/webnetesctl/raw/main/img/launch.png" alt="PWA badge" width="200"/></a>
+
+If you prefer to self-host, see [contributing](#contributing); static binaries for the manager and worker, a `.tar.gz` archive for the frontend and a OCI image for containerization are also available on [GitHub releases](https://github.com/pojntfx/skysweeper/releases) and [GitHub container registry](https://github.com/pojntfx/skysweeper/packages) respectively.
 
 ## Screenshots
 
