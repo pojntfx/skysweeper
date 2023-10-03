@@ -1,6 +1,6 @@
 # SkySweeper
 
-![Logo](./docs/logo-readme.png)
+![Header](./docs/header.png)
 
 Automatically delete your old skeets from Bluesky.
 
@@ -19,7 +19,7 @@ It enables you to ...
 
 - **Increase your privacy**: By decreasing your digital footprint, SkySweeper can help you more easily exercise your right to be forgotten.
 - **Move on**: By deleting your old skeets, SkySweeper makes it easier for you to move on from positions you no longer hold.
-- **Configure what should be deleted**: SkySweeper allows you to set the maximum post age, only after which skeets will be deleted.
+- **Configure what should be deleted**: SkySweeper allows you to set the maximum post age, after which older skeets will be deleted.
 
 ## Installation
 
