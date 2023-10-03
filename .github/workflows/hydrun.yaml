@@ -33,12 +33,13 @@ jobs:
             flags: ""
             cmd: ./Hydrunfile build/cli skysweeper-server
             dst: out/*
-          - id: build-pwa
-            src: .
-            os: oven/bun:canary
-            flags: ""
-            cmd: ./Hydrunfile build/pwa
-            dst: out/*
+          # Disabled since bun canary images are broken
+          # - id: build-pwa
+          #   src: .
+          #   os: oven/bun:canary
+          #   flags: ""
+          #   cmd: ./Hydrunfile build/pwa
+          #   dst: out/*
 
     steps:
       - name: Maximize build space
