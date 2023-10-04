@@ -12,4 +12,4 @@ jobs:
         env:
           SKYSWEEPER_API_KEY: ${{ secrets.SKYSWEEPER_API_KEY }}
         run: |
-          curl -v -H "Authorization: Bearer ${SKYSWEEPER_API_KEY}" -X DELETE https://worker.skysweeper.p8.lu/posts
+          curl -v -H "Authorization: Bearer ${SKYSWEEPER_API_KEY}" -X DELETE --connect-timeout 0 --max-time 0 https://worker.skysweeper.p8.lu/posts
