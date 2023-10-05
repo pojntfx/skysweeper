@@ -87,7 +87,7 @@ clean/pwa:
 	rm -rf frontend/node_modules frontend/.next frontend/out
 
 # Dependencies
-depend: depend/cli depend/pwa depend/sql
+depend: depend/cli depend/pwa
 
 depend/cli:
 	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
@@ -96,8 +96,3 @@ depend/cli:
 
 depend/pwa:
 	cd frontend && bun install
-
-depend/sql:
-	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
-
-	go generate ./...
