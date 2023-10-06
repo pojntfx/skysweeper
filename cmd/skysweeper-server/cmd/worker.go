@@ -142,7 +142,13 @@ var workerCmd = &cobra.Command{
 
 					session, err := atproto.ServerRefreshSession(ctx, client)
 					if err != nil {
-						log.Println("Could not refresh session for DID", auth.Did, ", skipping:", err)
+						log.Println("Could not refresh session for DID", auth.Did, ", disabling configuration and skipping:", err)
+
+						if err := persister.DisableConfiguration(ctx, auth.Did); err != nil {
+							log.Println("Could not disable configuration for DID", auth.Did, ", skipping:", err)
+
+							continue
+						}
 
 						continue
 					}

@@ -19,6 +19,17 @@ func (q *Queries) DeleteConfiguration(ctx context.Context, did string) error {
 	return err
 }
 
+const disableConfiguration = `-- name: DisableConfiguration :exec
+update configurations
+set enabled = false
+where did = $1
+`
+
+func (q *Queries) DisableConfiguration(ctx context.Context, did string) error {
+	_, err := q.db.ExecContext(ctx, disableConfiguration, did)
+	return err
+}
+
 const getConfiguration = `-- name: GetConfiguration :one
 select did, service, refresh_jwt, cursor, enabled, post_ttl
 from configurations

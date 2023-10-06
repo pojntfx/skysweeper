@@ -37,6 +37,13 @@ func (p *ManagerPersister) DeleteConfiguration(
 	return p.queries.DeleteConfiguration(ctx, did)
 }
 
+func (p *WorkerPersister) DisableConfiguration(
+	ctx context.Context,
+	did string,
+) error {
+	return p.queries.DisableConfiguration(ctx, did)
+}
+
 func (p *WorkerPersister) GetEnabledConfigurations(
 	ctx context.Context,
 ) ([]models.Configuration, error) {

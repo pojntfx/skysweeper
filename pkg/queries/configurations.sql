@@ -31,3 +31,7 @@ update configurations
 set refresh_jwt = $1,
     cursor = $2
 where did = $3;
+-- name: DisableConfiguration :exec
+update configurations
+set enabled = false
+where did = $1;
