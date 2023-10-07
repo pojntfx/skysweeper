@@ -395,9 +395,9 @@ export default function Home() {
                               <FormLabel>Maximum post age</FormLabel>
 
                               <FormDescription>
-                                SkySweeper will periodically scan your skeets, and
-                                if they are older than the maximum post age it
-                                will delete them for you automatically.
+                                SkySweeper will periodically scan your skeets,
+                                and if they are older than the maximum post age
+                                it will delete them for you automatically.
                               </FormDescription>
 
                               <FormControl>
@@ -532,7 +532,7 @@ export default function Home() {
           <Form {...setupForm}>
             <form
               onSubmit={setupForm.handleSubmit((v) => {
-                setUsername(v.username);
+                setUsername(v.username.replace(/^@/, ""));
                 setPassword(v.password);
 
                 setService(v.service);
@@ -653,8 +653,8 @@ export default function Home() {
                           <FormLabel>SkySweeper API</FormLabel>
 
                           <FormDescription>
-                            The URL that SkySweeper&apos;s API is hosted on; most
-                            users don&apos;t need to change this.
+                            The URL that SkySweeper&apos;s API is hosted on;
+                            most users don&apos;t need to change this.
                           </FormDescription>
 
                           <FormControl>
@@ -686,8 +686,8 @@ export default function Home() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete your SkySweeper account and remove your
-              data from our servers. This action cannot be undone.
+              This will permanently delete your SkySweeper account and remove
+              your data from our servers. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
